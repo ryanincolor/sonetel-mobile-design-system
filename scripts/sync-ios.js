@@ -12,10 +12,10 @@ import { execSync } from "child_process";
 // Configuration - Update these paths for your setup
 const CONFIG = {
   // Path to your iOS project (update this!)
-  iosProjectPath: process.env.IOS_PROJECT_PATH || "../your-ios-app",
+  iosProjectPath: process.env.IOS_PROJECT_PATH || "../sonetel-mobile-ios",
 
   // Path within iOS project where design system files go
-  designSystemPath: "YourApp/DesignSystem",
+  designSystemPath: "Sonetel Mobile/DesignSystem",
 
   // Git settings
   gitCommitMessage: "chore: update design system tokens",
@@ -57,7 +57,10 @@ async function main() {
       fs.mkdirSync(designSystemFullPath, { recursive: true });
     }
 
-    // Step 4: Copy Swift files
+    // Step 4: Generate stats file
+    generateStatsFile();
+
+    // Step 5: Copy Swift files
     console.log("📋 Copying Swift files to iOS project...");
     const sourceDir = "./dist/ios";
     const swiftFiles = fs
@@ -74,15 +77,15 @@ async function main() {
       console.log(`   ✅ ${file}`);
     }
 
-    // Step 5: Generate integration report
+    // Step 6: Generate integration report
     const report = generateIntegrationReport(copiedFiles);
 
-    // Step 6: Git operations (if requested)
+    // Step 7: Git operations (if requested)
     if (process.argv.includes("--git")) {
       await handleGitOperations(iosProjectFullPath, copiedFiles);
     }
 
-    // Step 7: Send notifications (if configured)
+    // Step 8: Send notifications (if configured)
     if (CONFIG.slackWebhookUrl) {
       await sendSlackNotification(copiedFiles);
     }
@@ -97,9 +100,13 @@ async function main() {
 }
 
 function generateIntegrationReport(copiedFiles) {
-  const stats = JSON.parse(
-    fs.readFileSync("./dist/ios/stats.json", "utf8"),
-  ).catch(() => ({}));
+  let stats = {};
+  try {
+    stats = JSON.parse(fs.readFileSync("./dist/ios/stats.json", "utf8"));
+  } catch (error) {
+    // Stats file doesn't exist, use empty object
+    stats = {};
+  }
 
   return `
 📊 Design System Sync Report
@@ -279,9 +286,6 @@ Configuration:
 `);
   process.exit(0);
 }
-
-// Generate stats before running main
-generateStatsFile();
 
 // Run the sync
 main().catch(console.error);
