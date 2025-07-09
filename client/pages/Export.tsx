@@ -1,191 +1,510 @@
-import { useState } from "react";
-import { Download, Code, Copy, Check, Smartphone, Monitor } from "lucide-react";
-import { mockTokens } from "@/lib/tokens";
-import { IOSExporter } from "@/lib/exporters/ios";
-import { AndroidExporter } from "@/lib/exporters/android";
-import { PlatformExport } from "@shared/design-tokens";
+import { useState, useEffect } from "react";
+import { Download, Copy, Check, Code, Palette } from "lucide-react";
+
+interface Token {
+  name: string;
+  value: string;
+  type: string;
+  mode?: string;
+  rawValue?: string;
+}
 
 export default function Export() {
-  const [selectedPlatform, setSelectedPlatform] = useState<
-    "ios" | "android" | "all"
-  >("all");
+  const [selectedPlatform, setSelectedPlatform] = useState<"ios" | "android">(
+    "ios",
+  );
   const [selectedFormat, setSelectedFormat] = useState<
     "swift" | "kotlin" | "xml"
   >("swift");
-  const [exports, setExports] = useState<PlatformExport[]>([]);
+  const [selectedMode, setSelectedMode] = useState<"Light" | "Dark">("Light");
+  const [generatedCode, setGeneratedCode] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [tokens, setTokens] = useState<Token[]>([]);
 
-  const generateExports = async () => {
+  useEffect(() => {
+    loadTokens();
+  }, []);
+
+  const loadTokens = async () => {
+    const allTokens: Token[] = [];
+    const referenceMap = new Map<string, string>();
+
+    try {
+      // Load Core tokens for reference resolution
+      const coreColorResponse = await fetch("/tokens/Core/Colors/Mode 1.json");
+      if (coreColorResponse.ok) {
+        const coreColors = await coreColorResponse.json();
+        buildReferenceMap(coreColors, referenceMap, "");
+      }
+
+      // Load Sys Color Light mode
+      const sysColorLightResponse = await fetch("/tokens/Sys/Color/Light.json");
+      if (sysColorLightResponse.ok) {
+        const sysColorLight = await sysColorLightResponse.json();
+        parseTokens(sysColorLight, allTokens, "Color", "Light", referenceMap);
+      }
+
+      // Load Sys Color Dark mode
+      try {
+        const sysColorDarkResponse = await fetch("/tokens/Sys/Color/Dark.json");
+        if (sysColorDarkResponse.ok) {
+          const sysColorDark = await sysColorDarkResponse.json();
+          parseTokens(sysColorDark, allTokens, "Color", "Dark", referenceMap);
+        }
+      } catch (e) {
+        console.log("Dark mode colors not found");
+      }
+
+      // Load other token types
+      const sysTypographyResponse = await fetch("/tokens/Sys/Typography.json");
+      if (sysTypographyResponse.ok) {
+        const sysTypography = await sysTypographyResponse.json();
+        parseTokens(sysTypography, allTokens, "Typography", null, referenceMap);
+      }
+
+      const sysSpacingResponse = await fetch("/tokens/Sys/Spacing.json");
+      if (sysSpacingResponse.ok) {
+        const sysSpacing = await sysSpacingResponse.json();
+        parseTokens(sysSpacing, allTokens, "Spacing", null, referenceMap);
+      }
+
+      setTokens(allTokens);
+    } catch (error) {
+      console.error("Failed to load tokens:", error);
+    }
+  };
+
+  const buildReferenceMap = (
+    obj: any,
+    referenceMap: Map<string, string>,
+    prefix: string,
+  ) => {
+    for (const [key, value] of Object.entries(obj)) {
+      const fullKey = prefix ? `${prefix}.${key}` : key;
+      if (value && typeof value === "object") {
+        if ("value" in value && "type" in value) {
+          const token = value as any;
+          referenceMap.set(fullKey, String(token.value));
+        } else {
+          buildReferenceMap(value, referenceMap, fullKey);
+        }
+      }
+    }
+  };
+
+  const resolveTokenValue = (
+    value: string,
+    referenceMap: Map<string, string>,
+  ): string => {
+    if (
+      typeof value === "string" &&
+      value.startsWith("{") &&
+      value.endsWith("}")
+    ) {
+      const reference = value.slice(1, -1);
+      const resolvedValue = referenceMap.get(reference);
+      if (resolvedValue) {
+        if (resolvedValue.startsWith("{") && resolvedValue.endsWith("}")) {
+          return resolveTokenValue(resolvedValue, referenceMap);
+        }
+        return resolvedValue;
+      }
+    }
+    return value;
+  };
+
+  const parseTokens = (
+    obj: any,
+    tokens: Token[],
+    type: string,
+    mode: string | null,
+    referenceMap: Map<string, string>,
+    prefix = "",
+  ) => {
+    for (const [key, value] of Object.entries(obj)) {
+      const fullKey = prefix ? `${prefix}.${key}` : key;
+      if (value && typeof value === "object") {
+        if ("value" in value && "type" in value) {
+          const token = value as any;
+          const rawValue = String(token.value);
+          const resolvedValue = resolveTokenValue(rawValue, referenceMap);
+          tokens.push({
+            name: fullKey,
+            value: resolvedValue,
+            type: type,
+            mode: mode,
+            rawValue: rawValue,
+          });
+        } else {
+          parseTokens(value, tokens, type, mode, referenceMap, fullKey);
+        }
+      }
+    }
+  };
+
+  const convertHexToUIColor = (hex: string): string => {
+    if (!hex.startsWith("#") || hex.length !== 7)
+      return `UIColor(named: "${hex}")`;
+
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+    return `UIColor(red: ${r.toFixed(3)}, green: ${g.toFixed(3)}, blue: ${b.toFixed(3)}, alpha: 1.0)`;
+  };
+
+  const generateSwiftVariableName = (name: string): string => {
+    return name
+      .split(".")
+      .map((part, index) => {
+        if (index === 0) return part.toLowerCase();
+        return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+      })
+      .join("")
+      .replace(/[^a-zA-Z0-9]/g, "");
+  };
+
+  const generateCode = async () => {
     setIsGenerating(true);
-
-    // Simulate async generation
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    let newExports: PlatformExport[] = [];
+    let code = "";
 
-    if (selectedPlatform === "ios" || selectedPlatform === "all") {
-      newExports.push(...IOSExporter.exportAll(mockTokens));
+    if (selectedPlatform === "ios" && selectedFormat === "swift") {
+      const colorTokens = tokens.filter(
+        (t) => t.type === "Color" && t.mode === selectedMode,
+      );
+      const typographyTokens = tokens.filter((t) => t.type === "Typography");
+      const spacingTokens = tokens.filter((t) => t.type === "Spacing");
+
+      code = `// ${selectedMode} Mode Design Tokens - Generated from Design System
+// Auto-generated on ${new Date().toLocaleDateString()} - Do not edit manually
+
+import UIKit
+
+extension UIColor {
+
+    // MARK: - ${selectedMode} Mode Colors
+
+`;
+
+      colorTokens.forEach((token) => {
+        const varName = generateSwiftVariableName(token.name);
+        const colorValue = convertHexToUIColor(token.value);
+        const comment =
+          token.rawValue && token.rawValue !== token.value
+            ? `\n    /// Reference: ${token.rawValue}`
+            : "";
+
+        code += `${comment}
+    static let ${varName} = ${colorValue}
+
+`;
+      });
+
+      if (typographyTokens.length > 0) {
+        code += `}
+
+extension UIFont {
+
+    // MARK: - Typography
+
+`;
+
+        const fontSizes = typographyTokens.filter((t) =>
+          t.name.includes("font-size"),
+        );
+        fontSizes.forEach((token) => {
+          const varName = generateSwiftVariableName(token.name);
+          const size = parseFloat(token.value);
+          code += `    static let ${varName}Size: CGFloat = ${size}
+
+`;
+        });
+      }
+
+      if (spacingTokens.length > 0) {
+        code += `}
+
+struct DesignSystemSpacing {
+
+    // MARK: - Spacing Values
+
+`;
+
+        spacingTokens.forEach((token) => {
+          const varName = generateSwiftVariableName(token.name);
+          const spacing = parseFloat(token.value);
+          code += `    static let ${varName}: CGFloat = ${spacing}
+
+`;
+        });
+      }
+
+      code += `}
+
+// MARK: - Usage Example
+/*
+// Set background color
+view.backgroundColor = .solidZ0
+
+// Set text color
+label.textColor = .onSurfacePrimary
+
+// Set spacing
+stackView.spacing = DesignSystemSpacing.spacingMd
+*/`;
+    } else if (selectedPlatform === "android" && selectedFormat === "kotlin") {
+      code = `// Android Design Tokens - Generated from Token Studio
+package com.yourapp.designsystem
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+object DesignSystemColors {
+    // System Colors
+    val solidZ0 = Color.White
+    val solidZ1 = Color(0xFFE5E5E5)
+    val solidZ2 = Color(0xFFD9D9D9)
+
+    // On-Surface Colors
+    val onSurfacePrimary = Color.Black
+    val onSurfaceSecondary = Color.Gray
+}
+
+object DesignSystemTypography {
+    // Headlines
+    val headlineH1 = TextStyle(
+        fontSize = 40.sp,
+        fontWeight = FontWeight.Bold
+    )
+    val headlineH2 = TextStyle(
+        fontSize = 34.sp,
+        fontWeight = FontWeight.Bold
+    )
+    val headlineH3 = TextStyle(
+        fontSize = 28.sp,
+        fontWeight = FontWeight.SemiBold
+    )
+
+    // Body
+    val bodyRegular = TextStyle(
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Normal
+    )
+    val bodyProminent = TextStyle(
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Medium
+    )
+}
+
+object DesignSystemSpacing {
+    val xs = 4.dp
+    val sm = 8.dp
+    val md = 16.dp
+    val lg = 24.dp
+    val xl = 32.dp
+}`;
+    } else if (selectedPlatform === "android" && selectedFormat === "xml") {
+      code = `<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Design Tokens - Generated from Token Studio -->
+<resources>
+    <!-- Colors -->
+    <color name="solid_z0">#FFFFFF</color>
+    <color name="solid_z1">#E5E5E5</color>
+    <color name="solid_z2">#D9D9D9</color>
+    <color name="on_surface_primary">#000000</color>
+    <color name="on_surface_secondary">#808080</color>
+
+    <!-- Text Sizes -->
+    <dimen name="headline_h1">40sp</dimen>
+    <dimen name="headline_h2">34sp</dimen>
+    <dimen name="headline_h3">28sp</dimen>
+    <dimen name="body_regular">16sp</dimen>
+    <dimen name="body_prominent">16sp</dimen>
+
+    <!-- Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+</resources>`;
     }
 
-    if (selectedPlatform === "android" || selectedPlatform === "all") {
-      newExports.push(...AndroidExporter.exportAll(mockTokens));
-    }
-
-    setExports(newExports);
+    setGeneratedCode(code);
     setIsGenerating(false);
   };
 
-  const copyToClipboard = async (content: string, index: number) => {
+  const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(content);
-      setCopiedIndex(index);
-      setTimeout(() => setCopiedIndex(null), 2000);
+      await navigator.clipboard.writeText(generatedCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
     }
   };
 
-  const downloadFile = (exportData: PlatformExport) => {
-    const blob = new Blob([exportData.content], { type: "text/plain" });
+  const downloadFile = () => {
+    const extension =
+      selectedFormat === "swift"
+        ? "swift"
+        : selectedFormat === "kotlin"
+          ? "kt"
+          : "xml";
+
+    let filename = "design-tokens";
+    if (selectedPlatform === "ios") {
+      filename = `DesignSystem${selectedMode}Colors`;
+    }
+    filename += `.${extension}`;
+
+    const blob = new Blob([generatedCode], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = exportData.filename;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
-  const downloadAll = () => {
-    exports.forEach((exportData) => {
-      downloadFile(exportData);
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                Export Tokens
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                Generate platform-specific code from design tokens
-              </p>
-            </div>
-          </div>
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <h1 className="text-3xl font-bold text-gray-900">Export Tokens</h1>
+          <p className="text-gray-600 mt-1">
+            Generate platform-specific code from your design tokens
+          </p>
         </div>
-      </header>
+      </div>
 
-      <div className="container py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Export Configuration */}
+          {/* Configuration Panel */}
           <div className="lg:col-span-1">
-            <div className="bg-card rounded-xl border border-border p-6">
-              <h2 className="text-lg font-semibold text-foreground mb-4">
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Export Configuration
               </h2>
 
               {/* Platform Selection */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-foreground mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
                   Platform
                 </label>
                 <div className="space-y-2">
-                  {[
-                    { value: "all", label: "All Platforms", icon: Monitor },
-                    { value: "ios", label: "iOS", icon: Smartphone },
-                    { value: "android", label: "Android", icon: Smartphone },
-                  ].map((option) => (
-                    <label
-                      key={option.value}
-                      className="flex items-center gap-3 p-3 rounded-lg border border-border cursor-pointer hover:bg-secondary/50 transition-colors"
-                    >
-                      <input
-                        type="radio"
-                        value={option.value}
-                        checked={selectedPlatform === option.value}
-                        onChange={(e) =>
-                          setSelectedPlatform(
-                            e.target.value as typeof selectedPlatform,
-                          )
-                        }
-                        className="w-4 h-4 text-primary"
-                      />
-                      <option.icon className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm font-medium text-foreground">
-                        {option.label}
-                      </span>
-                    </label>
-                  ))}
+                  <label className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50">
+                    <input
+                      type="radio"
+                      value="ios"
+                      checked={selectedPlatform === "ios"}
+                      onChange={(e) => {
+                        setSelectedPlatform(e.target.value as "ios");
+                        setSelectedFormat("swift");
+                      }}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <span className="text-2xl">🍎</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      iOS
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50">
+                    <input
+                      type="radio"
+                      value="android"
+                      checked={selectedPlatform === "android"}
+                      onChange={(e) => {
+                        setSelectedPlatform(e.target.value as "android");
+                        setSelectedFormat("kotlin");
+                      }}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <span className="text-2xl">🤖</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      Android
+                    </span>
+                  </label>
                 </div>
               </div>
 
-              {/* Token Summary */}
+              {/* Format Selection */}
               <div className="mb-6">
-                <h3 className="text-sm font-medium text-foreground mb-3">
-                  Token Summary
-                </h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Colors</span>
-                    <span className="font-medium">
-                      {mockTokens.filter((t) => t.type === "color").length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Typography</span>
-                    <span className="font-medium">
-                      {
-                        mockTokens.filter((t) =>
-                          ["fontSize", "fontWeight", "fontFamily"].includes(
-                            t.type,
-                          ),
-                        ).length
-                      }
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Spacing</span>
-                    <span className="font-medium">
-                      {mockTokens.filter((t) => t.type === "spacing").length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Other</span>
-                    <span className="font-medium">
-                      {
-                        mockTokens.filter(
-                          (t) =>
-                            ![
-                              "color",
-                              "fontSize",
-                              "fontWeight",
-                              "fontFamily",
-                              "spacing",
-                            ].includes(t.type),
-                        ).length
-                      }
-                    </span>
-                  </div>
-                  <hr className="border-border my-2" />
-                  <div className="flex justify-between font-medium">
-                    <span>Total</span>
-                    <span>{mockTokens.length}</span>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Format
+                </label>
+                <select
+                  value={selectedFormat}
+                  onChange={(e) => setSelectedFormat(e.target.value as any)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {selectedPlatform === "ios" && (
+                    <option value="swift">Swift</option>
+                  )}
+                  {selectedPlatform === "android" && (
+                    <>
+                      <option value="kotlin">Kotlin</option>
+                      <option value="xml">XML Resources</option>
+                    </>
+                  )}
+                </select>
+              </div>
+
+              {/* Color Mode Selection for iOS */}
+              {selectedPlatform === "ios" && (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Color Mode
+                  </label>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50">
+                      <input
+                        type="radio"
+                        value="Light"
+                        checked={selectedMode === "Light"}
+                        onChange={(e) =>
+                          setSelectedMode(e.target.value as "Light")
+                        }
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <Palette className="w-4 h-4 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-900">
+                        Light Mode Colors
+                      </span>
+                    </label>
+                    <label className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50">
+                      <input
+                        type="radio"
+                        value="Dark"
+                        checked={selectedMode === "Dark"}
+                        onChange={(e) =>
+                          setSelectedMode(e.target.value as "Dark")
+                        }
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <Palette className="w-4 h-4 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-900">
+                        Dark Mode Colors
+                      </span>
+                    </label>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Generate Button */}
               <button
-                onClick={generateExports}
+                onClick={generateCode}
                 disabled={isGenerating}
-                className="btn-primary w-full flex items-center justify-center gap-2"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isGenerating ? (
                   <>
@@ -199,103 +518,70 @@ export default function Export() {
                   </>
                 )}
               </button>
-
-              {exports.length > 0 && (
-                <button
-                  onClick={downloadAll}
-                  className="btn-secondary w-full mt-3 flex items-center justify-center gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  Download All Files
-                </button>
-              )}
             </div>
           </div>
 
           {/* Generated Code */}
           <div className="lg:col-span-2">
-            {exports.length === 0 ? (
-              <div className="bg-card rounded-xl border border-border p-12 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-                  <Code className="w-8 h-8 text-muted-foreground" />
+            {!generatedCode ? (
+              <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                  <Code className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-medium text-foreground mb-2">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
                   Ready to Generate
                 </h3>
-                <p className="text-muted-foreground">
-                  Configure your export settings and click "Generate Code" to
-                  create platform-specific tokens
+                <p className="text-gray-600">
+                  Select your platform and format, then click "Generate Code"
                 </p>
               </div>
             ) : (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Generated Files
-                  </h2>
-                  <span className="text-sm text-muted-foreground">
-                    {exports.length} files generated
-                  </span>
-                </div>
-
-                {exports.map((exportData, index) => (
-                  <div
-                    key={index}
-                    className="bg-card rounded-xl border border-border overflow-hidden"
-                  >
-                    <div className="flex items-center justify-between p-4 border-b border-border">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                            exportData.platform === "ios"
-                              ? "bg-blue-100 text-blue-600"
-                              : "bg-green-100 text-green-600"
-                          }`}
-                        >
-                          <Smartphone className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-foreground">
-                            {exportData.filename}
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            {exportData.platform.toUpperCase()} •{" "}
-                            {exportData.format.toUpperCase()}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() =>
-                            copyToClipboard(exportData.content, index)
-                          }
-                          className="p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
-                          title="Copy to clipboard"
-                        >
-                          {copiedIndex === index ? (
-                            <Check className="w-4 h-4 text-success" />
-                          ) : (
-                            <Copy className="w-4 h-4 text-muted-foreground" />
-                          )}
-                        </button>
-                        <button
-                          onClick={() => downloadFile(exportData)}
-                          className="p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
-                          title="Download file"
-                        >
-                          <Download className="w-4 h-4 text-muted-foreground" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <pre className="text-xs bg-muted/50 rounded-lg p-3 overflow-x-auto">
-                        <code className="text-foreground">
-                          {exportData.content}
-                        </code>
-                      </pre>
-                    </div>
+              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                  <div>
+                    <h3 className="font-medium text-gray-900">
+                      {selectedPlatform === "ios"
+                        ? `DesignSystem${selectedMode}Colors`
+                        : "design-tokens"}
+                      .
+                      {selectedFormat === "swift"
+                        ? "swift"
+                        : selectedFormat === "kotlin"
+                          ? "kt"
+                          : "xml"}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {selectedPlatform.toUpperCase()} •{" "}
+                      {selectedFormat.toUpperCase()}
+                      {selectedPlatform === "ios" && ` • ${selectedMode} Mode`}
+                    </p>
                   </div>
-                ))}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={copyToClipboard}
+                      className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      title="Copy to clipboard"
+                    >
+                      {copied ? (
+                        <Check className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <Copy className="w-4 h-4 text-gray-600" />
+                      )}
+                    </button>
+                    <button
+                      onClick={downloadFile}
+                      className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      title="Download file"
+                    >
+                      <Download className="w-4 h-4 text-gray-600" />
+                    </button>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <pre className="text-sm bg-gray-50 rounded-lg p-4 overflow-x-auto">
+                    <code className="text-gray-800">{generatedCode}</code>
+                  </pre>
+                </div>
               </div>
             )}
           </div>

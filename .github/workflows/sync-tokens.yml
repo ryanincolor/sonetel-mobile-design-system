@@ -1,0 +1,199 @@
+name: Sync Design Tokens with Style Dictionary
+
+on:
+  # Trigger when tokens are updated
+  push:
+    paths:
+      - "tokens/**"
+
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Target platforms"
+        required: true
+        default: "both"
+        type: choice
+        options:
+          - both
+          - ios
+          - android
+
+  # Scheduled sync (optional)
+  schedule:
+    - cron: "0 */6 * * *" # Every 6 hours
+
+jobs:
+  sync-tokens:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Design System
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Design Tokens with Style Dictionary
+        run: npm run tokens:build
+
+      - name: Update iOS Repository
+        if: ${{ github.event.inputs.target == 'ios' || github.event.inputs.target == 'both' || github.event.inputs.target == '' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            // Read generated iOS files from Style Dictionary
+            const lightColors = fs.readFileSync('./dist/ios/DesignSystemLightColors.swift', 'utf8');
+            const darkColors = fs.readFileSync('./dist/ios/DesignSystemDarkColors.swift', 'utf8');
+
+            const repo = '${{ vars.IOS_REPO }}' || 'ryanincolor/sonetel-mobile-ios';
+            const [owner, repoName] = repo.split('/');
+
+            // Update Light Colors
+            await updateFile(owner, repoName, 'SonetelMobile/DesignSystem/DesignSystemLightColors.swift', lightColors);
+
+            // Update Dark Colors
+            await updateFile(owner, repoName, 'SonetelMobile/DesignSystem/DesignSystemDarkColors.swift', darkColors);
+
+            async function updateFile(owner, repo, path, content) {
+              try {
+                // Get current file to get SHA
+                const { data: currentFile } = await github.rest.repos.getContent({
+                  owner,
+                  repo,
+                  path,
+                });
+                
+                // Update file
+                await github.rest.repos.createOrUpdateFileContents({
+                  owner,
+                  repo,
+                  path,
+                  message: `chore: update design tokens via Style Dictionary - ${new Date().toISOString()}`,
+                  content: Buffer.from(content).toString('base64'),
+                  sha: currentFile.sha,
+                });
+                
+                console.log(`✅ Updated ${path}`);
+              } catch (error) {
+                if (error.status === 404) {
+                  // File doesn't exist, create it
+                  await github.rest.repos.createOrUpdateFileContents({
+                    owner,
+                    repo,
+                    path,
+                    message: `feat: add design tokens via Style Dictionary - ${new Date().toISOString()}`,
+                    content: Buffer.from(content).toString('base64'),
+                  });
+                  console.log(`✅ Created ${path}`);
+                } else {
+                  throw error;
+                }
+              }
+            }
+
+      - name: Update Android Repository
+        if: ${{ github.event.inputs.target == 'android' || github.event.inputs.target == 'both' || github.event.inputs.target == '' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            // Read generated Android files from Style Dictionary
+            const colorsXml = fs.readFileSync('./dist/android/colors.xml', 'utf8');
+            const colorsKotlin = fs.readFileSync('./dist/android/DesignSystemColors.kt', 'utf8');
+
+            const repo = '${{ vars.ANDROID_REPO }}';
+            if (!repo) {
+              console.log('No Android repo configured, skipping Android update');
+              return;
+            }
+
+            const [owner, repoName] = repo.split('/');
+
+            // Update XML colors
+            await updateFile(owner, repoName, 'app/src/main/res/values/design_colors.xml', colorsXml);
+
+            // Update Kotlin colors
+            await updateFile(owner, repoName, 'app/src/main/java/com/sonetel/designsystem/DesignSystemColors.kt', colorsKotlin);
+
+            async function updateFile(owner, repo, path, content) {
+              try {
+                const { data: currentFile } = await github.rest.repos.getContent({
+                  owner,
+                  repo,
+                  path,
+                });
+                
+                await github.rest.repos.createOrUpdateFileContents({
+                  owner,
+                  repo,
+                  path,
+                  message: `chore: update design tokens via Style Dictionary - ${new Date().toISOString()}`,
+                  content: Buffer.from(content).toString('base64'),
+                  sha: currentFile.sha,
+                });
+                
+                console.log(`✅ Updated ${path}`);
+              } catch (error) {
+                if (error.status === 404) {
+                  await github.rest.repos.createOrUpdateFileContents({
+                    owner,
+                    repo,
+                    path,
+                    message: `feat: add design tokens via Style Dictionary - ${new Date().toISOString()}`,
+                    content: Buffer.from(content).toString('base64'),
+                  });
+                  console.log(`✅ Created ${path}`);
+                } else {
+                  throw error;
+                }
+              }
+            }
+
+      - name: Notify Success
+        if: success()
+        run: |
+          echo "🎉 Design tokens successfully synced with Style Dictionary!"
+          echo "Generated files:"
+          ls -la dist/ios/ || echo "No iOS files"
+          ls -la dist/android/ || echo "No Android files"
+
+      - name: Upload Generated Files as Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-tokens-${{ github.run_number }}
+          path: |
+            dist/ios/
+            dist/android/
+            dist/web/
+          retention-days: 30
+
+      - name: Send Slack Notification
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: "#design-system"
+          text: |
+            🎨 Design Tokens Sync ${{ job.status }} (Style Dictionary)
+
+            Repository: ${{ github.repository }}
+            Trigger: ${{ github.event_name }}
+            Target: ${{ github.event.inputs.target || 'both' }}
+
+            ${{ job.status == 'success' && '✅ Tokens synced successfully with Style Dictionary!' || '❌ Sync failed - check logs' }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

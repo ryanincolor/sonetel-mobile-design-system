@@ -1,0 +1,185 @@
+name: Sync iOS Design Tokens
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tokens/**"
+      - "scripts/quick-ios-build.js"
+
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      target_repo:
+        description: "Target iOS repository (username/repo-name)"
+        required: true
+        default: "ryanincolor/sonetel-mobile-ios"
+      target_branch:
+        description: "Target branch to create/update"
+        required: false
+        default: "design-system-update"
+
+jobs:
+  sync-ios:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout design system repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate iOS tokens
+        run: npm run tokens:build
+
+      - name: Get token statistics
+        id: stats
+        run: |
+          # Count tokens in generated files
+          COLORS=$(grep -c "static let" dist/ios/DesignSystemColors.swift || echo "0")
+          TYPOGRAPHY=$(grep -c "static let" dist/ios/DesignSystemTypography.swift || echo "0")
+          SPACING=$(grep -c "static let" dist/ios/DesignSystemSpacing.swift || echo "0")
+
+          echo "colors=$COLORS" >> $GITHUB_OUTPUT
+          echo "typography=$TYPOGRAPHY" >> $GITHUB_OUTPUT
+          echo "spacing=$SPACING" >> $GITHUB_OUTPUT
+
+      - name: Checkout target iOS repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.inputs.target_repo || 'ryanincolor/sonetel-mobile-ios' }}
+          token: ${{ secrets.IOS_SYNC_TOKEN }}
+          path: ios-repo
+          fetch-depth: 0
+
+      - name: Create/Switch to update branch
+        working-directory: ios-repo
+        run: |
+          BRANCH_NAME="${{ github.event.inputs.target_branch || 'design-system-update' }}"
+          git config user.name "Design System Bot"
+          git config user.email "design-system@yourcompany.com"
+
+          # Create or switch to branch
+          git checkout -B $BRANCH_NAME
+
+      - name: Copy Swift files to iOS project
+        run: |
+          # Create DesignSystem directory if it doesn't exist
+          mkdir -p ios-repo/Sonetel/DesignSystem
+
+          # Copy all generated Swift files
+          cp dist/ios/*.swift ios-repo/Sonetel/DesignSystem/
+
+          echo "📁 Copied files:"
+          ls -la ios-repo/Sonetel/DesignSystem/
+
+      - name: Commit and push changes
+        working-directory: ios-repo
+        run: |
+          # Add changes
+          git add Sonetel/DesignSystem/
+
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "has_changes=false" >> $GITHUB_ENV
+          else
+            # Commit changes
+            git commit -m "🎨 Update design system tokens
+
+            - Colors: ${{ steps.stats.outputs.colors }} adaptive tokens (auto light/dark)
+            - Typography: ${{ steps.stats.outputs.typography }} tokens
+            - Spacing: ${{ steps.stats.outputs.spacing }} tokens
+
+            Generated from: ${{ github.repository }}@${{ github.sha }}
+
+            Files updated:
+            $(ls Sonetel/DesignSystem/ | sed 's/^/- /')"
+
+            # Push changes
+            git push origin ${{ github.event.inputs.target_branch || 'design-system-update' }}
+            echo "has_changes=true" >> $GITHUB_ENV
+          fi
+
+      - name: Create Pull Request
+        if: env.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.IOS_SYNC_TOKEN }}
+          path: ios-repo
+          title: "🎨 Update Design System Tokens"
+          body: |
+            ## Design System Update
+
+            This PR updates the design system tokens with the latest changes from the design system repository.
+
+            ### 📊 Token Summary
+            - **Colors**: ${{ steps.stats.outputs.colors }} adaptive tokens (automatic light/dark mode)
+            - **Typography**: ${{ steps.stats.outputs.typography }} tokens
+            - **Spacing**: ${{ steps.stats.outputs.spacing }} tokens
+
+            ### 🔄 What Changed
+            - Updated `DesignSystemColors.swift` - Colors now automatically adapt to light/dark mode
+            - Updated `DesignSystemTypography.swift` - Font sizes and weights
+            - Updated `DesignSystemSpacing.swift` - Spacing values and border radius
+
+            ### ✅ Testing Checklist
+            - [ ] Build the iOS project successfully
+            - [ ] Test light/dark mode switching
+            - [ ] Verify colors, typography, and spacing look correct
+            - [ ] Check that no hardcoded values were missed
+
+            ### 📚 Integration Guide
+            See the [iOS Integration Guide](https://github.com/${{ github.repository }}/blob/main/IOS_INTEGRATION.md) for usage examples.
+
+            ---
+
+            🤖 *This PR was automatically generated from design system changes in commit ${{ github.sha }}*
+          branch: ${{ github.event.inputs.target_branch || 'design-system-update' }}
+          base: main
+
+      - name: Post to Slack
+        if: env.has_changes == 'true' && secrets.SLACK_WEBHOOK_URL
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: |
+            🎨 Design System tokens have been synced to iOS!
+
+            📊 *Token Summary:*
+            • Colors: ${{ steps.stats.outputs.colors }} adaptive tokens
+            • Typography: ${{ steps.stats.outputs.typography }} tokens
+            • Spacing: ${{ steps.stats.outputs.spacing }} tokens
+
+            📱 *iOS Repository:* ${{ github.event.inputs.target_repo || 'ryanincolor/sonetel-mobile-ios' }}
+            🔗 *Pull Request created for review*
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Summary
+        run: |
+          echo "## 🎉 iOS Sync Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Token Statistics" >> $GITHUB_STEP_SUMMARY
+          echo "- **Colors**: ${{ steps.stats.outputs.colors }} adaptive tokens" >> $GITHUB_STEP_SUMMARY
+          echo "- **Typography**: ${{ steps.stats.outputs.typography }} tokens" >> $GITHUB_STEP_SUMMARY
+          echo "- **Spacing**: ${{ steps.stats.outputs.spacing }} tokens" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 Target Repository" >> $GITHUB_STEP_SUMMARY
+          echo "${{ github.event.inputs.target_repo || 'ryanincolor/sonetel-mobile-ios' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ env.has_changes }}" == "true" ]]; then
+            echo "✅ **Pull Request created** with the latest design tokens" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ **No changes** - tokens are already up to date" >> $GITHUB_STEP_SUMMARY
+          fi

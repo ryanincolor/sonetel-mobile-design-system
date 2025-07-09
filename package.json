@@ -18,7 +18,20 @@
     "start": "node dist/server/node-build.mjs",
     "test": "vitest --run",
     "format.fix": "prettier --write .",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "tokens:build": "node scripts/quick-ios-build.js",
+    "tokens:build:ios": "npm run tokens:build && echo 'iOS tokens built'",
+    "tokens:build:android": "npm run tokens:build && echo 'Android tokens built'",
+    "export:tokens": "npm run tokens:build",
+    "export:ios:light": "npm run tokens:build",
+    "export:ios:dark": "npm run tokens:build",
+    "export:android:xml": "npm run tokens:build",
+    "export:android:kotlin": "npm run tokens:build",
+    "sync:ios": "node scripts/sync-ios.js",
+    "sync:ios:git": "node scripts/sync-ios.js --git",
+    "sync:ios:push": "node scripts/sync-ios.js --git --push",
+    "sync:manual": "curl -X POST http://localhost:8080/api/automation/manual",
+    "sync:status": "curl http://localhost:8080/api/automation/status"
   },
   "dependencies": {
     "express": "^4.18.2",

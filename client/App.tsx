@@ -14,10 +14,12 @@ import {
   Book,
   Eye,
   Settings,
+  Zap,
 } from "lucide-react";
 import Index from "./pages/Index";
 import Tokens from "./pages/Tokens";
 import Export from "./pages/Export";
+import Automation from "./pages/Automation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +32,7 @@ function Navigation() {
     { path: "/", icon: Home, label: "Overview" },
     { path: "/tokens", icon: Palette, label: "Tokens" },
     { path: "/export", icon: Download, label: "Export" },
+    { path: "/automation", icon: Zap, label: "Automation" },
     { path: "/import", icon: Upload, label: "Import" },
     { path: "/components", icon: Eye, label: "Components" },
     { path: "/docs", icon: Book, label: "Documentation" },
@@ -184,6 +187,14 @@ const App = () => (
             element={
               <AppLayout>
                 <Export />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/automation"
+            element={
+              <AppLayout>
+                <Automation />
               </AppLayout>
             }
           />

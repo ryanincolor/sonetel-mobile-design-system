@@ -6,98 +6,10 @@ import {
   TypographyToken,
   SpacingToken,
 } from "@shared/design-tokens";
+import { TokenStudioLoader } from "./token-studio-loader";
+import { SimpleTokenLoader } from "./simple-token-loader";
 
 export class TokenParser {
-  private static parseTokenValue(token: TokenStudioToken): string {
-    // Handle Token Studio references like {color.primary.500}
-    if (
-      typeof token.value === "string" &&
-      token.value.startsWith("{") &&
-      token.value.endsWith("}")
-    ) {
-      // For now, return as-is. In real implementation, you'd resolve references
-      return token.value;
-    }
-    return token.value;
-  }
-
-  private static determineTokenType(
-    key: string,
-    token: TokenStudioToken,
-  ): DesignToken["type"] {
-    // Explicit type from Token Studio
-    if (token.type) {
-      const typeMapping: { [key: string]: DesignToken["type"] } = {
-        color: "color",
-        dimension: "dimension",
-        fontFamilies: "fontFamily",
-        fontWeights: "fontWeight",
-        fontSize: "fontSize",
-        lineHeights: "lineHeight",
-        spacing: "spacing",
-        borderRadius: "borderRadius",
-        borderWidth: "borderWidth",
-        opacity: "opacity",
-        boxShadow: "boxShadow",
-      };
-      return typeMapping[token.type] || "other";
-    }
-
-    // Infer from key structure
-    if (key.includes("color") || key.includes("bg") || key.includes("text"))
-      return "color";
-    if (key.includes("font-family")) return "fontFamily";
-    if (key.includes("font-weight")) return "fontWeight";
-    if (key.includes("font-size")) return "fontSize";
-    if (key.includes("line-height")) return "lineHeight";
-    if (
-      key.includes("spacing") ||
-      key.includes("margin") ||
-      key.includes("padding")
-    )
-      return "spacing";
-    if (key.includes("radius")) return "borderRadius";
-    if (key.includes("border")) return "borderWidth";
-    if (key.includes("opacity")) return "opacity";
-    if (key.includes("shadow")) return "boxShadow";
-
-    return "other";
-  }
-
-  private static flattenTokens(
-    tokenSet: TokenStudioTokenSet,
-    prefix = "",
-  ): DesignToken[] {
-    const tokens: DesignToken[] = [];
-
-    for (const [key, value] of Object.entries(tokenSet)) {
-      const fullKey = prefix ? `${prefix}.${key}` : key;
-
-      if ("value" in value && "type" in value) {
-        // This is a token
-        const token = value as TokenStudioToken;
-        tokens.push({
-          name: fullKey,
-          value: this.parseTokenValue(token),
-          type: this.determineTokenType(fullKey, token),
-          category: prefix || "global",
-          description: token.description,
-        });
-      } else {
-        // This is a nested token set
-        tokens.push(
-          ...this.flattenTokens(value as TokenStudioTokenSet, fullKey),
-        );
-      }
-    }
-
-    return tokens;
-  }
-
-  static parseTokenStudioJson(json: TokenStudioTokenSet): DesignToken[] {
-    return this.flattenTokens(json);
-  }
-
   static groupTokensByType(tokens: DesignToken[]): {
     [key: string]: DesignToken[];
   } {
@@ -129,14 +41,108 @@ export class TokenParser {
       {} as { [key: string]: DesignToken[] },
     );
   }
+
+  static getCoreTokens(tokens: DesignToken[]): DesignToken[] {
+    return tokens.filter((token) =>
+      token.category.toLowerCase().startsWith("core"),
+    );
+  }
+
+  static getSystemTokens(tokens: DesignToken[]): DesignToken[] {
+    return tokens.filter((token) =>
+      token.category.toLowerCase().startsWith("sys"),
+    );
+  }
+
+  static getColorTokens(tokens: DesignToken[]): DesignToken[] {
+    return tokens.filter((token) => token.type === "color");
+  }
+
+  static getTypographyTokens(tokens: DesignToken[]): DesignToken[] {
+    return tokens.filter((token) =>
+      ["fontFamily", "fontWeight", "fontSize", "lineHeight"].includes(
+        token.type,
+      ),
+    );
+  }
+
+  static getSpacingTokens(tokens: DesignToken[]): DesignToken[] {
+    return tokens.filter((token) =>
+      ["spacing", "dimension"].includes(token.type),
+    );
+  }
 }
 
 // Token management store
 export class TokenStore {
   private static tokens: DesignToken[] = [];
+  private static loaded = false;
+  private static loading = false;
+
+  static async loadTokens(): Promise<DesignToken[]> {
+    if (this.loaded) {
+      console.log("Tokens already loaded:", this.tokens.length);
+      return this.tokens;
+    }
+
+    if (this.loading) {
+      // Wait for ongoing load
+      return new Promise((resolve) => {
+        const checkLoaded = () => {
+          if (this.loaded) {
+            resolve(this.tokens);
+          } else {
+            setTimeout(checkLoaded, 100);
+          }
+        };
+        checkLoaded();
+      });
+    }
+
+    this.loading = true;
+    console.log("Loading mobile tokens from Sys folder...");
+
+    try {
+      // Try to load mobile/sys tokens first
+      const sysTokens = await SimpleTokenLoader.loadSysTokens();
+
+      if (sysTokens.length > 0) {
+        console.log(
+          `Successfully loaded ${sysTokens.length} mobile tokens from Sys folder`,
+        );
+        this.tokens = sysTokens;
+      } else {
+        console.warn(
+          "No Sys tokens loaded, trying full Token Studio loader...",
+        );
+        const loadedTokens = await TokenStudioLoader.loadAndParseTokens();
+
+        if (loadedTokens.length > 0) {
+          console.log(
+            `Successfully loaded ${loadedTokens.length} tokens from Token Studio`,
+          );
+          this.tokens = loadedTokens;
+        } else {
+          console.warn("No tokens loaded, using mock data");
+          this.tokens = mockTokens;
+        }
+      }
+
+      this.loaded = true;
+      this.loading = false;
+      return this.tokens;
+    } catch (error) {
+      console.error("Failed to load tokens, falling back to mock data:", error);
+      this.tokens = mockTokens;
+      this.loaded = true;
+      this.loading = false;
+      return this.tokens;
+    }
+  }
 
   static setTokens(tokens: DesignToken[]) {
     this.tokens = tokens;
+    this.loaded = true;
   }
 
   static getTokens(): DesignToken[] {
@@ -148,7 +154,7 @@ export class TokenStore {
   }
 
   static getTokensByCategory(category: string): DesignToken[] {
-    return this.tokens.filter((token) => token.category === category);
+    return this.tokens.filter((token) => token.category.includes(category));
   }
 
   static getToken(name: string): DesignToken | undefined {
@@ -163,6 +169,18 @@ export class TokenStore {
         token.description?.toLowerCase().includes(lowerQuery) ||
         token.value.toLowerCase().includes(lowerQuery),
     );
+  }
+
+  static getCoreTokens(): DesignToken[] {
+    return TokenParser.getCoreTokens(this.tokens);
+  }
+
+  static getSystemTokens(): DesignToken[] {
+    return TokenParser.getSystemTokens(this.tokens);
+  }
+
+  static isLoaded(): boolean {
+    return this.loaded;
   }
 }
 

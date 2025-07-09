@@ -1,292 +1,246 @@
 import { useState, useEffect } from "react";
-import {
-  Palette,
-  Type,
-  Ruler,
-  Smartphone,
-  Download,
-  Upload,
-  GitBranch,
-  Search,
-  Eye,
-  Code2,
-  Figma,
-  ArrowRight,
-  Activity,
-  Users,
-  Zap,
-} from "lucide-react";
-import { TokenStore, mockTokens } from "@/lib/tokens";
-import { TokenGrid } from "@/components/design-system/TokenDisplay";
+import { Link } from "react-router-dom";
+import { Palette, Type, Ruler, Download, Eye, ArrowRight } from "lucide-react";
+
+interface TokenStats {
+  total: number;
+  colors: number;
+  typography: number;
+  spacing: number;
+  categories: string[];
+}
 
 export default function Index() {
-  const [recentTokens, setRecentTokens] = useState(mockTokens.slice(0, 6));
-  const [stats] = useState({
-    totalTokens: mockTokens.length,
-    colorTokens: mockTokens.filter((t) => t.type === "color").length,
-    typographyTokens: mockTokens.filter(
-      (t) =>
-        t.type === "fontSize" ||
-        t.type === "fontWeight" ||
-        t.type === "fontFamily",
-    ).length,
-    spacingTokens: mockTokens.filter((t) => t.type === "spacing").length,
+  const [stats, setStats] = useState<TokenStats>({
+    total: 0,
+    colors: 0,
+    typography: 0,
+    spacing: 0,
+    categories: [],
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    TokenStore.setTokens(mockTokens);
+    loadStats();
   }, []);
 
-  const quickActions = [
+  const loadStats = async () => {
+    let totalTokens = 0;
+    let colorTokens = 0;
+    let typographyTokens = 0;
+    let spacingTokens = 0;
+    const categories = new Set<string>();
+
+    try {
+      // Count tokens from each file
+      const files = [
+        { path: "/tokens/Sys/Color/Light.json", category: "Color" },
+        { path: "/tokens/Sys/Typography.json", category: "Typography" },
+        { path: "/tokens/Sys/Spacing.json", category: "Spacing" },
+        { path: "/tokens/Sys/Border Radius.json", category: "Border Radius" },
+        { path: "/tokens/Core/Colors/Mode 1.json", category: "Core Colors" },
+      ];
+
+      for (const file of files) {
+        try {
+          const response = await fetch(file.path);
+          if (response.ok) {
+            const data = await response.json();
+            const count = countTokens(data);
+            totalTokens += count;
+            categories.add(file.category);
+
+            // Categorize tokens
+            if (file.category.includes("Color")) {
+              colorTokens += count;
+            } else if (file.category.includes("Typography")) {
+              typographyTokens += count;
+            } else if (file.category.includes("Spacing")) {
+              spacingTokens += count;
+            }
+          }
+        } catch (error) {
+          console.warn(`Failed to load ${file.path}:`, error);
+        }
+      }
+
+      setStats({
+        total: totalTokens,
+        colors: colorTokens,
+        typography: typographyTokens,
+        spacing: spacingTokens,
+        categories: Array.from(categories),
+      });
+    } catch (error) {
+      console.error("Failed to load stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const countTokens = (obj: any, count = 0): number => {
+    for (const value of Object.values(obj)) {
+      if (value && typeof value === "object") {
+        if ("value" in value && "type" in value) {
+          count++;
+        } else {
+          count = countTokens(value, count);
+        }
+      }
+    }
+    return count;
+  };
+
+  const statCards = [
     {
-      icon: Upload,
-      title: "Import from Figma",
-      description: "Sync tokens via Token Studio",
-      href: "/import",
-      color: "bg-primary",
-    },
-    {
-      icon: Download,
-      title: "Export Tokens",
-      description: "Generate iOS & Android code",
-      href: "/export",
-      color: "bg-accent",
-    },
-    {
+      label: "Total Tokens",
+      value: stats.total,
       icon: Eye,
-      title: "Preview Components",
-      description: "View component examples",
-      href: "/components",
-      color: "bg-success",
+      color: "bg-blue-100 text-blue-600",
+      bgColor: "bg-blue-50",
     },
     {
-      icon: Code2,
-      title: "Documentation",
-      description: "Implementation guides",
-      href: "/docs",
-      color: "bg-warning",
+      label: "Colors",
+      value: stats.colors,
+      icon: Palette,
+      color: "bg-green-100 text-green-600",
+      bgColor: "bg-green-50",
+    },
+    {
+      label: "Typography",
+      value: stats.typography,
+      icon: Type,
+      color: "bg-purple-100 text-purple-600",
+      bgColor: "bg-purple-50",
+    },
+    {
+      label: "Spacing",
+      value: stats.spacing,
+      icon: Ruler,
+      color: "bg-orange-100 text-orange-600",
+      bgColor: "bg-orange-50",
     },
   ];
 
-  const recentActivity = [
-    {
-      type: "import",
-      message: "Imported 24 color tokens from Figma",
-      time: "2 hours ago",
-      icon: Figma,
-    },
-    {
-      type: "export",
-      message: "Generated Swift tokens for iOS",
-      time: "1 day ago",
-      icon: Smartphone,
-    },
-    {
-      type: "update",
-      message: "Updated spacing scale values",
-      time: "2 days ago",
-      icon: Ruler,
-    },
-  ];
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading design system...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                Design System
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                Shared tokens and components for iOS & Android
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button className="p-2 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors">
-                <Search className="w-5 h-5 text-muted-foreground" />
-              </button>
-              <button className="btn-primary flex items-center gap-2">
-                <GitBranch className="w-4 h-4" />
-                Sync with Figma
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="container py-8">
-        {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Activity className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">
-                  {stats.totalTokens}
-                </p>
-                <p className="text-sm text-muted-foreground">Total Tokens</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                <Palette className="w-5 h-5 text-accent" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">
-                  {stats.colorTokens}
-                </p>
-                <p className="text-sm text-muted-foreground">Colors</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
-                <Type className="w-5 h-5 text-success" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">
-                  {stats.typographyTokens}
-                </p>
-                <p className="text-sm text-muted-foreground">Typography</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
-                <Ruler className="w-5 h-5 text-warning" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">
-                  {stats.spacingTokens}
-                </p>
-                <p className="text-sm text-muted-foreground">Spacing</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-foreground mb-4">
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {quickActions.map((action, index) => (
-              <a
-                key={index}
-                href={action.href}
-                className="bg-card rounded-xl p-4 border border-border hover:shadow-md transition-all duration-200 group"
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              Mobile Design System
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 opacity-90">
+              Shared design tokens for iOS and Android apps
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                to="/tokens"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
               >
-                <div className="flex items-start gap-3">
-                  <div
-                    className={`w-10 h-10 rounded-lg ${action.color} flex items-center justify-center`}
-                  >
-                    <action.icon className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-foreground">
-                      {action.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {action.description}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                </div>
-              </a>
+                <Eye className="w-5 h-5" />
+                Browse {stats.total} Tokens
+              </Link>
+              <Link
+                to="/export"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-400 transition-colors"
+              >
+                <Download className="w-5 h-5" />
+                Export for Mobile
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Section */}
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          {statCards.map((stat, index) => (
+            <div
+              key={index}
+              className={`${stat.bgColor} rounded-xl p-6 text-center`}
+            >
+              <div
+                className={`w-12 h-12 ${stat.color} rounded-lg mx-auto mb-4 flex items-center justify-center`}
+              >
+                <stat.icon className="w-6 h-6" />
+              </div>
+              <p className="text-3xl font-bold text-gray-900 mb-1">
+                {stat.value}
+              </p>
+              <p className="text-gray-600 text-sm">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Available Categories */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Available Token Categories
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {stats.categories.map((category, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow"
+              >
+                <h3 className="font-semibold text-gray-900 mb-2">{category}</h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Design tokens for {category.toLowerCase()} in your mobile apps
+                </p>
+                <Link
+                  to="/tokens"
+                  className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium text-sm"
+                >
+                  View Tokens
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
             ))}
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Recent Tokens */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-foreground">
-                Recent Tokens
-              </h2>
-              <a
-                href="/tokens"
-                className="text-sm font-medium text-primary hover:text-primary/80"
-              >
-                View All
-              </a>
-            </div>
-            <TokenGrid tokens={recentTokens} platform="web" />
-          </div>
-
-          {/* Recent Activity */}
-          <div>
-            <h2 className="text-xl font-semibold text-foreground mb-4">
-              Recent Activity
+        {/* Platform Support */}
+        <div className="bg-white rounded-xl border border-gray-200 p-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Ready for Mobile Development
             </h2>
-            <div className="space-y-3">
-              {recentActivity.map((activity, index) => (
-                <div
-                  key={index}
-                  className="bg-card rounded-xl p-4 border border-border"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                      <activity.icon className="w-4 h-4 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">
-                        {activity.message}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {activity.time}
-                      </p>
-                    </div>
-                  </div>
+            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+              Export your design tokens as platform-specific code for iOS and
+              Android development.
+            </p>
+            <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-xl mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-2xl font-bold">🍎</span>
                 </div>
-              ))}
-            </div>
-
-            {/* Platform Status */}
-            <div className="mt-6 bg-card rounded-xl p-4 border border-border">
-              <h3 className="font-medium text-foreground mb-3">
-                Platform Status
-              </h3>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    iOS Tokens
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-success"></div>
-                    <span className="text-xs text-success">Synced</span>
-                  </div>
+                <h3 className="font-semibold text-gray-900 mb-2">iOS</h3>
+                <p className="text-gray-600 text-sm">
+                  Swift constants for UIKit and SwiftUI
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-xl mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-2xl font-bold">🤖</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Android Tokens
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-success"></div>
-                    <span className="text-xs text-success">Synced</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Figma Sync
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-warning"></div>
-                    <span className="text-xs text-warning">Pending</span>
-                  </div>
-                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">Android</h3>
+                <p className="text-gray-600 text-sm">
+                  XML resources and Kotlin for Jetpack Compose
+                </p>
               </div>
             </div>
           </div>
