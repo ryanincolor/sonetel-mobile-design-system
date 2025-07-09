@@ -6,10 +6,10 @@
     "Core/Typography/Value",
     "Core/Spacings/Mode 1",
     "Core/Icons/Mode 1",
-    "MSys/Color/Light",
-    "MSys/Color/Dark",
-    "MSys/Typography/Mode 1",
-    "MSys/Spacing/Value",
-    "MSys/Border Radius/Mode 1"
+    "Sys/Color/Light",
+    "Sys/Color/Dark",
+    "Sys/Typography",
+    "Sys/Spacing",
+    "Sys/Border Radius"
   ]
 }
