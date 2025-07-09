@@ -1,0 +1,26 @@
+{
+  "stroke": {
+    "default": {
+      "value": 2,
+      "type": "number"
+    },
+    "light": {
+      "value": 1.5,
+      "type": "number"
+    }
+  },
+  "size": {
+    "large": {
+      "value": 24,
+      "type": "number"
+    },
+    "medium": {
+      "value": 20,
+      "type": "number"
+    },
+    "small": {
+      "value": 16,
+      "type": "number"
+    }
+  }
+}

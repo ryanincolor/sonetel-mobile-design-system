@@ -1,0 +1,178 @@
+{
+  "weight": {
+    "body": {
+      "regular": {
+        "value": "{font.weight.regular}",
+        "type": "text"
+      },
+      "prominent": {
+        "value": "{font.weight.medium}",
+        "type": "text"
+      }
+    }
+  },
+  "font-size": {
+    "headline": {
+      "h1": {
+        "value": 40,
+        "type": "number"
+      },
+      "h2": {
+        "value": 34,
+        "type": "number"
+      },
+      "h3": {
+        "value": 28,
+        "type": "number"
+      },
+      "h4": {
+        "value": 24,
+        "type": "number"
+      },
+      "h5": {
+        "value": 20,
+        "type": "number"
+      },
+      "h6": {
+        "value": 18,
+        "type": "number"
+      }
+    },
+    "label": {
+      "x-large": {
+        "value": 18,
+        "type": "number"
+      },
+      "large": {
+        "value": 16,
+        "type": "number"
+      },
+      "medium": {
+        "value": 14,
+        "type": "number"
+      },
+      "small": {
+        "value": 12,
+        "type": "number"
+      }
+    },
+    "display": {
+      "large": {
+        "value": 72,
+        "type": "number"
+      },
+      "medium": {
+        "value": 64,
+        "type": "number"
+      },
+      "small": {
+        "value": 56,
+        "type": "number"
+      },
+      "xl": {
+        "value": 96,
+        "type": "number"
+      }
+    },
+    "body": {
+      "x-large": {
+        "value": 18,
+        "type": "number"
+      },
+      "large": {
+        "value": 16,
+        "type": "number"
+      },
+      "medium": {
+        "value": 14,
+        "type": "number"
+      },
+      "small": {
+        "value": 12,
+        "type": "number"
+      }
+    }
+  },
+  "line-height": {
+    "headline": {
+      "h1": {
+        "value": 46,
+        "type": "number"
+      },
+      "h2": {
+        "value": 40,
+        "type": "number"
+      },
+      "h3": {
+        "value": 34,
+        "type": "number"
+      },
+      "h4": {
+        "value": 29,
+        "type": "number"
+      },
+      "h5": {
+        "value": 24,
+        "type": "number"
+      },
+      "h6": {
+        "value": 22,
+        "type": "number"
+      }
+    },
+    "label": {
+      "x-large": {
+        "value": 20,
+        "type": "number"
+      },
+      "large": {
+        "value": 18,
+        "type": "number"
+      },
+      "medium": {
+        "value": 16,
+        "type": "number"
+      },
+      "small": {
+        "value": 14,
+        "type": "number"
+      }
+    },
+    "display": {
+      "xl": {
+        "value": 96,
+        "type": "number"
+      },
+      "large": {
+        "value": 80,
+        "type": "number"
+      },
+      "medium": {
+        "value": 64,
+        "type": "number"
+      },
+      "small": {
+        "value": 56,
+        "type": "number"
+      }
+    },
+    "body": {
+      "x-large": {
+        "value": 22,
+        "type": "number"
+      },
+      "large": {
+        "value": 20,
+        "type": "number"
+      },
+      "medium": {
+        "value": 18,
+        "type": "number"
+      },
+      "small": {
+        "value": 16,
+        "type": "number"
+      }
+    }
+  }
+}

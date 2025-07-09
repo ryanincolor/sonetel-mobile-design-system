@@ -1,0 +1,14 @@
+{
+  "large": {
+    "value": 20,
+    "type": "number"
+  },
+  "medium": {
+    "value": 16,
+    "type": "number"
+  },
+  "small": {
+    "value": 8,
+    "type": "number"
+  }
+}

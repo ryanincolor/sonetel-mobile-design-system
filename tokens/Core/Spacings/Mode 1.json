@@ -1,0 +1,56 @@
+{
+  "spacing": {
+    "11": {
+      "value": 40,
+      "type": "number"
+    },
+    "13": {
+      "value": 48,
+      "type": "number"
+    },
+    "15": {
+      "value": 56,
+      "type": "number"
+    },
+    "17": {
+      "value": 64,
+      "type": "number"
+    },
+    "01": {
+      "value": 2,
+      "type": "number"
+    },
+    "02": {
+      "value": 4,
+      "type": "number"
+    },
+    "03": {
+      "value": 8,
+      "type": "number"
+    },
+    "04": {
+      "value": 12,
+      "type": "number"
+    },
+    "05": {
+      "value": 16,
+      "type": "number"
+    },
+    "06": {
+      "value": 20,
+      "type": "number"
+    },
+    "07": {
+      "value": 24,
+      "type": "number"
+    },
+    "08": {
+      "value": 28,
+      "type": "number"
+    },
+    "09": {
+      "value": 32,
+      "type": "number"
+    }
+  }
+}

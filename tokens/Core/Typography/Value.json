@@ -1,0 +1,108 @@
+{
+  "font": {
+    "weight": {
+      "regular": {
+        "value": "regular",
+        "type": "text"
+      },
+      "medium": {
+        "value": "medium",
+        "type": "text"
+      },
+      "bold": {
+        "value": "semi-bold",
+        "type": "text"
+      },
+      "x-bold": {
+        "value": "bold",
+        "type": "text"
+      }
+    },
+    "family": {
+      "mobile": {
+        "value": "Inter",
+        "type": "text"
+      },
+      "web": {
+        "value": "Inter",
+        "type": "text"
+      },
+      "webapp": {
+        "value": "Inter",
+        "type": "text"
+      }
+    },
+    "size": {
+      "xxs": {
+        "value": 11,
+        "type": "number"
+      },
+      "xs": {
+        "value": 12,
+        "type": "number"
+      },
+      "sm": {
+        "value": 14,
+        "type": "number"
+      },
+      "md": {
+        "value": 16,
+        "type": "number"
+      },
+      "lg": {
+        "value": 20,
+        "type": "number"
+      },
+      "xl": {
+        "value": 24,
+        "type": "number"
+      },
+      "2xl": {
+        "value": 28,
+        "type": "number"
+      },
+      "3xl": {
+        "value": 34,
+        "type": "number"
+      },
+      "5xl": {
+        "value": 96,
+        "type": "number"
+      }
+    },
+    "line-height": {
+      "xs": {
+        "value": 0,
+        "type": "number"
+      },
+      "sm": {
+        "value": 0,
+        "type": "number"
+      },
+      "md": {
+        "value": 0,
+        "type": "number"
+      },
+      "lg": {
+        "value": 0,
+        "type": "number"
+      },
+      "xl": {
+        "value": 0,
+        "type": "number"
+      },
+      "2xl": {
+        "value": 0,
+        "type": "number"
+      },
+      "3xl": {
+        "value": 0,
+        "type": "number"
+      },
+      "4xl": {
+        "value": 0,
+        "type": "number"
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "spacing": {
+    "2xs": {
+      "value": 2,
+      "type": "number"
+    },
+    "s": {
+      "value": 8,
+      "type": "number"
+    },
+    "2xl": {
+      "value": 24,
+      "type": "number"
+    },
+    "m": {
+      "value": 12,
+      "type": "number"
+    },
+    "xl": {
+      "value": 20,
+      "type": "number"
+    },
+    "xs": {
+      "value": 4,
+      "type": "number"
+    },
+    "l": {
+      "value": 16,
+      "type": "number"
+    },
+    "6xl": {
+      "value": 48,
+      "type": "number"
+    },
+    "3xl": {
+      "value": 28,
+      "type": "number"
+    },
+    "4xl": {
+      "value": 32,
+      "type": "number"
+    },
+    "5xl": {
+      "value": 20,
+      "type": "number"
+    },
+    "7xl": {
+      "value": 56,
+      "type": "number"
+    },
+    "8xl": {
+      "value": 64,
+      "type": "number"
+    },
+    "9xl": {
+      "value": 72,
+      "type": "number"
+    },
+    "10xl": {
+      "value": 80,
+      "type": "number"
+    },
+    "11xl": {
+      "value": 96,
+      "type": "number"
+    },
+    "12xl": {
+      "value": 128,
+      "type": "number"
+    }
+  }
+}
