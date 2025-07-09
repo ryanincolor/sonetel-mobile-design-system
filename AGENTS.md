@@ -53,7 +53,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 ### Styling System
 
 - **Primary**: TailwindCSS 3 utility classes
-- **Theme and design tokens**: Configure in `client/global.css` 
+- **Theme and design tokens**: Configure in `client/global.css`
 - **UI components**: Pre-built library in `client/components/ui/`
 - **Utility**: `cn()` function combines `clsx` + `tailwind-merge` for conditional classes
 
@@ -73,16 +73,20 @@ className={cn(
 - **API endpoints**: Prefixed with `/api/`
 
 #### Example API Routes
+
 - `GET /api/ping` - Simple ping api
-- `GET /api/demo` - Demo endpoint  
+- `GET /api/demo` - Demo endpoint
 
 ### Shared Types
+
 Import consistent types in both client and server:
+
 ```typescript
-import { DemoResponse } from '@shared/api';
+import { DemoResponse } from "@shared/api";
 ```
 
 Path aliases:
+
 - `@shared/*` - Shared folder
 - `@/*` - Client folder
 
@@ -96,6 +100,46 @@ npm run typecheck  # TypeScript validation
 npm test          # Run Vitest tests
 ```
 
+## Design Token Building
+
+### Generate Design Tokens
+
+Build design tokens from the token files:
+
+```bash
+npm run tokens:build        # Generate iOS Swift files from design tokens
+```
+
+This generates adaptive Swift files with automatic light/dark mode support:
+
+- `dist/ios/DesignSystemColors.swift` - Adaptive colors
+- `dist/ios/DesignSystemTypography.swift` - Typography tokens
+- `dist/ios/DesignSystemSpacing.swift` - Spacing and border radius
+
+### Sync Tokens to Mobile Apps
+
+#### iOS Sync Commands
+
+```bash
+npm run sync:ios            # Copy tokens to iOS project
+npm run sync:ios:git        # Copy + create git branch and commit
+npm run sync:ios:git:push   # Copy + git operations + push to remote
+```
+
+The sync commands:
+
+1. Generate fresh design tokens
+2. Copy Swift files to your iOS project at `../sonetel-mobile-ios/Sonetel Mobile/DesignSystem/`
+3. Optionally create git branches and commit changes
+4. Provide integration reports
+
+#### Manual Token Status Check
+
+```bash
+npm run sync:status         # Check automation sync status
+npm run sync:manual         # Trigger manual sync via API
+```
+
 ## Adding Features
 
 ### Add new colors to the theme
@@ -103,7 +147,9 @@ npm test          # Run Vitest tests
 Open `client/global.css` and `tailwind.config.ts` and add new tailwind colors.
 
 ### New API Route
+
 1. **Optional**: Create a shared interface in `shared/api.ts`:
+
 ```typescript
 export interface MyRouteResponse {
   message: string;
@@ -112,19 +158,21 @@ export interface MyRouteResponse {
 ```
 
 2. Create a new route handler in `server/routes/my-route.ts`:
+
 ```typescript
 import { RequestHandler } from "express";
 import { MyRouteResponse } from "@shared/api"; // Optional: for type safety
 
 export const handleMyRoute: RequestHandler = (req, res) => {
   const response: MyRouteResponse = {
-    message: 'Hello from my endpoint!'
+    message: "Hello from my endpoint!",
   };
   res.json(response);
 };
 ```
 
 3. Register the route in `server/index.ts`:
+
 ```typescript
 import { handleMyRoute } from "./routes/my-route";
 
@@ -133,16 +181,19 @@ app.get("/api/my-endpoint", handleMyRoute);
 ```
 
 4. Use in React components with type safety:
-```typescript
-import { MyRouteResponse } from '@shared/api'; // Optional: for type safety
 
-const response = await fetch('/api/my-endpoint');
+```typescript
+import { MyRouteResponse } from "@shared/api"; // Optional: for type safety
+
+const response = await fetch("/api/my-endpoint");
 const data: MyRouteResponse = await response.json();
 ```
 
 ### New Page Route
+
 1. Create component in `client/pages/MyPage.tsx`
 2. Add route in `client/App.tsx`:
+
 ```typescript
 <Route path="/my-page" element={<MyPage />} />
 ```
