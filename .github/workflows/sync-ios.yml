@@ -147,24 +147,6 @@ jobs:
           branch: ${{ github.event.inputs.target_branch || 'design-system-update' }}
           base: main
 
-      - name: Post to Slack
-        if: env.has_changes == 'true'
-        uses: 8398a7/action-slack@v3
-        with:
-          status: success
-          text: |
-            🎨 Design System tokens have been synced to iOS!
-
-            📊 *Token Summary:*
-            • Colors: ${{ steps.stats.outputs.colors }} adaptive tokens
-            • Typography: ${{ steps.stats.outputs.typography }} tokens
-            • Spacing: ${{ steps.stats.outputs.spacing }} tokens
-
-            📱 *iOS Repository:* ${{ github.event.inputs.target_repo || 'ryanincolor/sonetel-mobile-ios' }}
-            🔗 *Pull Request created for review*
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
       - name: Summary
         run: |
           echo "## 🎉 iOS Sync Complete!" >> $GITHUB_STEP_SUMMARY
