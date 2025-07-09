@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Modern mobile-first design system
+   * Uses HSL format for Tailwind CSS compatibility
+   */
+  :root {
+    /* Background colors - clean neutrals */
+    --background: 250 100% 99%;
+    --foreground: 240 10% 4%;
+
+    /* Card and surface colors */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 4%;
+
+    /* Popover colors */
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 4%;
+
+    /* Primary brand - modern blue-purple gradient */
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary colors - soft grays */
+    --secondary: 240 6% 97%;
+    --secondary-foreground: 240 10% 4%;
+
+    /* Muted colors for subtle elements */
+    --muted: 240 6% 97%;
+    --muted-foreground: 240 4% 46%;
+
+    /* Accent colors - vibrant teal */
+    --accent: 175 84% 32%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Success color */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning color */
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Destructive/error colors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Border and input colors */
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 262 83% 58%;
+
+    /* App-specific colors */
+    --app-bar: 0 0% 100%;
+    --app-bar-foreground: 240 10% 4%;
+    --bottom-nav: 0 0% 100%;
+    --bottom-nav-foreground: 240 4% 46%;
+    --bottom-nav-active: 262 83% 58%;
+
+    /* Border radius for mobile-friendly touch targets */
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* Dark mode background - deep navy */
+    --background: 240 10% 4%;
+    --foreground: 250 100% 99%;
+
+    /* Dark card colors */
+    --card: 240 6% 8%;
+    --card-foreground: 250 100% 99%;
+
+    /* Dark popover colors */
+    --popover: 240 6% 8%;
+    --popover-foreground: 250 100% 99%;
+
+    /* Primary in dark mode - brighter */
+    --primary: 262 83% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Dark secondary colors */
+    --secondary: 240 4% 15%;
+    --secondary-foreground: 250 100% 99%;
+
+    /* Dark muted colors */
+    --muted: 240 4% 15%;
+    --muted-foreground: 240 5% 65%;
+
+    /* Dark accent */
+    --accent: 175 84% 45%;
+    --accent-foreground: 240 10% 4%;
+
+    /* Dark success */
+    --success: 142 76% 45%;
+    --success-foreground: 0 0% 100%;
+
+    /* Dark warning */
+    --warning: 45 93% 55%;
+    --warning-foreground: 240 10% 4%;
+
+    /* Dark destructive */
+    --destructive: 0 75% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Dark borders */
+    --border: 240 4% 15%;
+    --input: 240 4% 15%;
+    --ring: 262 83% 65%;
+
+    /* Dark app colors */
+    --app-bar: 240 6% 8%;
+    --app-bar-foreground: 250 100% 99%;
+    --bottom-nav: 240 6% 8%;
+    --bottom-nav-foreground: 240 5% 65%;
+    --bottom-nav-active: 262 83% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    /* Mobile-first font optimization */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent zoom on input focus on iOS */
+    font-size: 16px;
+  }
+
+  /* Mobile-friendly scroll behavior */
+  html {
+    scroll-behavior: smooth;
+    /* Prevent rubber band scrolling on iOS */
+    overflow-x: hidden;
+  }
+
+  /* App-like safe area handling */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-area-right {
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+@layer components {
+  /* App-like button styles */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground rounded-full px-6 py-3 font-semibold shadow-lg shadow-primary/25 active:scale-95 transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground rounded-full px-6 py-3 font-semibold active:scale-95 transition-all duration-200;
+  }
+
+  /* Card components with mobile-friendly touch targets */
+  .card-interactive {
+    @apply bg-card rounded-2xl p-4 shadow-sm border border-border active:scale-[0.98] transition-all duration-200;
+  }
+
+  /* Bottom navigation styles */
+  .bottom-nav-item {
+    @apply flex flex-col items-center justify-center py-2 px-3 rounded-xl transition-all duration-200;
+  }
+
+  .bottom-nav-item.active {
+    @apply text-bottom-nav-active bg-primary/10;
+  }
+
+  .bottom-nav-item:not(.active) {
+    @apply text-bottom-nav-foreground;
+  }
+}
