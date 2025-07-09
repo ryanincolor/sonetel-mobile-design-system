@@ -148,7 +148,7 @@ jobs:
           base: main
 
       - name: Post to Slack
-        if: env.has_changes == 'true' && secrets.SLACK_WEBHOOK_URL
+        if: env.has_changes == 'true'
         uses: 8398a7/action-slack@v3
         with:
           status: success
