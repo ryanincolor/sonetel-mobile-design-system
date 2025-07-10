@@ -294,7 +294,7 @@ enum ButtonVariant {
       "Extra Small": "h-8 px-3 text-xs min-w-[48px]",
       Small: "h-10 px-4 text-sm min-w-[64px]",
       Medium: "h-9 px-4 text-sm min-w-[72px]", // Updated to match Figma: 36px height, 72px min-width
-      Large: "h-14 px-6 text-lg min-w-[80px]",
+      Large: "h-12 px-5 text-lg min-w-[80px]",
       "Extra Large": "h-14 px-5 text-lg min-w-[280px]",
     };
 
@@ -797,7 +797,7 @@ enum ButtonVariant {
                             : buttonConfig.size === "Medium"
                               ? "36px"
                               : buttonConfig.size === "Large"
-                                ? "56px"
+                                ? "48px"
                                 : "56px"}
                       </span>
                     </div>
@@ -934,7 +934,7 @@ enum ButtonVariant {
                               : buttonConfig.size === "Medium"
                                 ? "8px 16px"
                                 : buttonConfig.size === "Large"
-                                  ? "16px 24px"
+                                  ? "16px 20px"
                                   : "16px 20px"}
                         </span>
                         <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
@@ -945,7 +945,7 @@ enum ButtonVariant {
                               : buttonConfig.size === "Medium"
                                 ? "spacing.03×spacing.05"
                                 : buttonConfig.size === "Large"
-                                  ? "spacing.05×spacing.07"
+                                  ? "spacing.05×spacing.06"
                                   : "spacing.05×spacing.06"}
                         </span>
                       </div>

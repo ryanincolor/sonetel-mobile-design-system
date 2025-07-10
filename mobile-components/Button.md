@@ -26,7 +26,7 @@ The Button component is a fundamental interactive element in the Sonetel mobile 
 | XS   | 32pt/dp | spacing.04×spacing.02 | font.size.xs | -         | Compact spaces        |
 | SM   | 40pt/dp | spacing.05×spacing.03 | font.size.sm | -         | Secondary actions     |
 | MD   | 36pt/dp | spacing.05×spacing.03 | font.size.sm | 72pt/dp   | Standard buttons      |
-| LG   | 56pt/dp | spacing.07×spacing.05 | font.size.lg | -         | Primary actions       |
+| LG   | 48pt/dp | spacing.06×spacing.05 | font.size.lg | 80pt/dp   | Primary actions       |
 | XL   | 56pt/dp | spacing.06×spacing.05 | font.size.lg | 280pt/dp  | Hero/featured buttons |
 
 ### Style Variants
@@ -256,7 +256,7 @@ extension SonetelButton {
             case .extraSmall: return 32
             case .small: return 40
             case .medium: return 36
-            case .large: return 56
+                        case .large: return 48
             case .extraLarge: return 56
             }
         }
@@ -271,9 +271,10 @@ extension SonetelButton {
             }
         }
 
-        var minWidth: CGFloat? {
+                var minWidth: CGFloat? {
             switch self {
             case .medium: return 72
+            case .large: return 80
             case .extraLarge: return 280
             default: return nil
             }
@@ -284,7 +285,7 @@ extension SonetelButton {
             case .extraSmall: return UIEdgeInsets(top: DesignTokens.spacing02, left: DesignTokens.spacing04, bottom: DesignTokens.spacing02, right: DesignTokens.spacing04)
             case .small: return UIEdgeInsets(top: DesignTokens.spacing03, left: DesignTokens.spacing05, bottom: DesignTokens.spacing03, right: DesignTokens.spacing05)
             case .medium: return UIEdgeInsets(top: DesignTokens.spacing03, left: DesignTokens.spacing05, bottom: DesignTokens.spacing03, right: DesignTokens.spacing05)
-            case .large: return UIEdgeInsets(top: DesignTokens.spacing05, left: DesignTokens.spacing07, bottom: DesignTokens.spacing05, right: DesignTokens.spacing07)
+                        case .large: return UIEdgeInsets(top: DesignTokens.spacing05, left: DesignTokens.spacing06, bottom: DesignTokens.spacing05, right: DesignTokens.spacing06)
             case .extraLarge: return UIEdgeInsets(top: DesignTokens.spacing05, left: DesignTokens.spacing06, bottom: DesignTokens.spacing05, right: DesignTokens.spacing06)
             }
         }
@@ -385,7 +386,7 @@ extension ButtonSize {
         case .extraSmall: return DesignTokens.spacing04
         case .small: return DesignTokens.spacing05
         case .medium: return DesignTokens.spacing05
-        case .large: return DesignTokens.spacing07
+                case .large: return DesignTokens.spacing06
         case .extraLarge: return DesignTokens.spacing06
         }
     }
@@ -495,7 +496,7 @@ enum class ButtonSize(
     ExtraSmall(32.dp, SonetelDesignTokens.spacing04, SonetelDesignTokens.spacing02, SonetelDesignTokens.fontSizeXS, null),
     Small(40.dp, SonetelDesignTokens.spacing05, SonetelDesignTokens.spacing03, SonetelDesignTokens.fontSizeSM, null),
     Medium(36.dp, SonetelDesignTokens.spacing05, SonetelDesignTokens.spacing03, SonetelDesignTokens.fontSizeSM, 72.dp),
-    Large(56.dp, SonetelDesignTokens.spacing07, SonetelDesignTokens.spacing05, SonetelDesignTokens.fontSizeLG, null),
+        Large(48.dp, SonetelDesignTokens.spacing06, SonetelDesignTokens.spacing05, SonetelDesignTokens.fontSizeLG, 80.dp),
     ExtraLarge(56.dp, SonetelDesignTokens.spacing06, SonetelDesignTokens.spacing05, SonetelDesignTokens.fontSizeLG, 280.dp)
 }
 
