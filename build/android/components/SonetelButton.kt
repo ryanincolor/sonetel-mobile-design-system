@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.sonetel.designsystem.SonetelDesignTokens
+import com.sonetel.ui.theme.SonetelTypography
 
 /**
  * Sonetel Button Component
@@ -87,11 +89,9 @@ fun SonetelButton(
                 strokeWidth = 2.dp
             )
         } else {
-            Text(
+                        Text(
                 text = text,
-                fontSize = size.fontSize,
-                fontWeight = SonetelDesignTokens.fontWeightBold,
-                letterSpacing = if (size == SonetelButtonSize.ExtraLarge) (-0.36).sp else 0.sp
+                style = size.textStyle
             )
         }
     }
@@ -104,14 +104,47 @@ enum class SonetelButtonSize(
     val height: Dp,
     val horizontalPadding: Dp,
     val verticalPadding: Dp,
-    val fontSize: TextUnit,
+    val textStyle: TextStyle,
     val minWidth: Dp?
 ) {
-                    ExtraSmall(SonetelDesignTokens.spacing4xl, SonetelDesignTokens.spacingM, SonetelDesignTokens.spacingXs, SonetelDesignTokens.fontSizeXs, null),
-    Small(SonetelDesignTokens.spacing10xl, SonetelDesignTokens.spacingL, SonetelDesignTokens.spacingS, SonetelDesignTokens.fontSizeSm, null),
-    Medium(SonetelDesignTokens.spacing4xl + 4.dp, SonetelDesignTokens.spacingL, SonetelDesignTokens.spacingS, SonetelDesignTokens.fontSizeSm, SonetelDesignTokens.spacing9xl),
-    Large(SonetelDesignTokens.spacing6xl, SonetelDesignTokens.spacingXl, SonetelDesignTokens.spacingL, SonetelDesignTokens.fontSizeLg, SonetelDesignTokens.spacing10xl),
-    ExtraLarge(SonetelDesignTokens.spacing7xl, SonetelDesignTokens.spacingXl, SonetelDesignTokens.spacingL, SonetelDesignTokens.fontSizeLg, 280.dp)
+                        ExtraSmall(
+        height = SonetelDesignTokens.spacing4xl,
+        horizontalPadding = SonetelDesignTokens.spacingM,
+        verticalPadding = SonetelDesignTokens.spacingXs,
+        textStyle = SonetelTypography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
+        minWidth = null
+    ),
+    Small(
+        height = SonetelDesignTokens.spacing10xl,
+        horizontalPadding = SonetelDesignTokens.spacingL,
+        verticalPadding = SonetelDesignTokens.spacingS,
+        textStyle = SonetelTypography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+        minWidth = null
+    ),
+    Medium(
+        height = SonetelDesignTokens.spacing4xl + 4.dp,
+        horizontalPadding = SonetelDesignTokens.spacingL,
+        verticalPadding = SonetelDesignTokens.spacingS,
+        textStyle = SonetelTypography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+        minWidth = SonetelDesignTokens.spacing9xl
+    ),
+    Large(
+        height = SonetelDesignTokens.spacing6xl,
+        horizontalPadding = SonetelDesignTokens.spacingXl,
+        verticalPadding = SonetelDesignTokens.spacingL,
+        textStyle = SonetelTypography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+        minWidth = SonetelDesignTokens.spacing10xl
+    ),
+    ExtraLarge(
+        height = SonetelDesignTokens.spacing7xl,
+        horizontalPadding = SonetelDesignTokens.spacingXl,
+        verticalPadding = SonetelDesignTokens.spacingL,
+        textStyle = SonetelTypography.labelLarge.copy(
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = SonetelDesignTokens.letterSpacingTight
+        ),
+        minWidth = 280.dp
+    )
 }
 
 /**
