@@ -75,7 +75,7 @@ async function main() {
 
     // Step 5: Copy resource files
     console.log("📋 Copying Android resource files...");
-    const sourceDir = "./dist/android";
+    const sourceDir = "./build/android";
 
     let copiedFiles = [];
 
@@ -150,7 +150,7 @@ async function main() {
 function generateIntegrationReport(copiedFiles) {
   let stats = {};
   try {
-    stats = JSON.parse(fs.readFileSync("./dist/android/stats.json", "utf8"));
+    stats = JSON.parse(fs.readFileSync("./build/android/stats.json", "utf8"));
   } catch (error) {
     // Stats file doesn't exist, use empty object
     stats = {};
@@ -273,11 +273,11 @@ async function sendSlackNotification(copiedFiles) {
 function generateStatsFile() {
   try {
     const kotlinFile = fs.readFileSync(
-      "./dist/android/DesignSystemTokens.kt",
+      "./build/android/DesignSystemTokens.kt",
       "utf8",
     );
     const valuesFile = fs.readFileSync(
-      "./dist/android/values/design_colors.xml",
+      "./build/android/values/design_colors.xml",
       "utf8",
     );
 
@@ -289,7 +289,7 @@ function generateStatsFile() {
     };
 
     fs.writeFileSync(
-      "./dist/android/stats.json",
+      "./build/android/stats.json",
       JSON.stringify(stats, null, 2),
     );
   } catch (error) {

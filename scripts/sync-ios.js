@@ -62,7 +62,7 @@ async function main() {
 
     // Step 5: Copy Swift files
     console.log("📋 Copying Swift files to iOS project...");
-    const sourceDir = "./dist/ios";
+    const sourceDir = "./build/ios";
     const swiftFiles = fs
       .readdirSync(sourceDir)
       .filter((file) => file.endsWith(".swift"));
@@ -102,7 +102,7 @@ async function main() {
 function generateIntegrationReport(copiedFiles) {
   let stats = {};
   try {
-    stats = JSON.parse(fs.readFileSync("./dist/ios/stats.json", "utf8"));
+    stats = JSON.parse(fs.readFileSync("./build/ios/stats.json", "utf8"));
   } catch (error) {
     // Stats file doesn't exist, use empty object
     stats = {};
@@ -194,7 +194,7 @@ async function sendSlackNotification(copiedFiles) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `*Design System tokens have been updated*\n\n*Files synced:*\n${copiedFiles.map((f) => `• \`${f}\``).join("\n")}\n\n*iOS Project:* \`${CONFIG.iosProjectPath}\``,
+          text: `*Design System tokens have been updated*\n\n*Files synced:*\n${copiedFiles.map((f) => `��� \`${f}\``).join("\n")}\n\n*iOS Project:* \`${CONFIG.iosProjectPath}\``,
         },
       },
       {
@@ -226,15 +226,15 @@ async function sendSlackNotification(copiedFiles) {
 function generateStatsFile() {
   try {
     const colorSwift = fs.readFileSync(
-      "./dist/ios/DesignSystemColors.swift",
+      "./build/ios/DesignSystemColors.swift",
       "utf8",
     );
     const typographySwift = fs.readFileSync(
-      "./dist/ios/DesignSystemTypography.swift",
+      "./build/ios/DesignSystemTypography.swift",
       "utf8",
     );
     const spacingSwift = fs.readFileSync(
-      "./dist/ios/DesignSystemSpacing.swift",
+      "./build/ios/DesignSystemSpacing.swift",
       "utf8",
     );
 
@@ -245,7 +245,7 @@ function generateStatsFile() {
       lastUpdated: new Date().toISOString(),
     };
 
-    fs.writeFileSync("./dist/ios/stats.json", JSON.stringify(stats, null, 2));
+    fs.writeFileSync("./build/ios/stats.json", JSON.stringify(stats, null, 2));
   } catch (error) {
     console.log("⚠️  Could not generate stats file:", error.message);
   }

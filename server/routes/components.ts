@@ -10,7 +10,7 @@ interface ComponentSpec {
 
 export const handleComponentsList: RequestHandler = (req, res) => {
   try {
-    const componentsDir = "./dist/mobile-components";
+    const componentsDir = "./build/mobile-components";
     const components: ComponentSpec[] = [];
 
     if (fs.existsSync(componentsDir)) {
@@ -41,7 +41,7 @@ export const handleComponentsList: RequestHandler = (req, res) => {
 export const handleComponentDownload: RequestHandler = (req, res) => {
   try {
     const componentName = req.params.name;
-    const filePath = `./dist/mobile-components/${componentName}.md`;
+    const filePath = `./build/mobile-components/${componentName}.md`;
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ error: "Component not found" });

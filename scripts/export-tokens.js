@@ -262,15 +262,15 @@ async function exportTokens() {
   console.log(`📦 Loaded ${tokens.length} tokens`);
 
   // Ensure output directories exist
-  ensureDir("./dist/ios");
-  ensureDir("./dist/android");
+  ensureDir("./build/ios");
+  ensureDir("./build/android");
 
   // Generate iOS files
   const iosLightCode = generateIOSColors(tokens, "Light");
   const iosDarkCode = generateIOSColors(tokens, "Dark");
 
-  fs.writeFileSync("./dist/ios/DesignSystemLightColors.swift", iosLightCode);
-  fs.writeFileSync("./dist/ios/DesignSystemDarkColors.swift", iosDarkCode);
+  fs.writeFileSync("./build/ios/DesignSystemLightColors.swift", iosLightCode);
+  fs.writeFileSync("./build/ios/DesignSystemDarkColors.swift", iosDarkCode);
 
   console.log("✅ Generated iOS Swift files");
 
@@ -278,8 +278,8 @@ async function exportTokens() {
   const androidXml = generateAndroidColorsXML(tokens);
   const androidKotlin = generateAndroidColorsKotlin(tokens);
 
-  fs.writeFileSync("./dist/android/colors.xml", androidXml);
-  fs.writeFileSync("./dist/android/DesignSystemColors.kt", androidKotlin);
+  fs.writeFileSync("./build/android/colors.xml", androidXml);
+  fs.writeFileSync("./build/android/DesignSystemColors.kt", androidKotlin);
 
   console.log("✅ Generated Android files");
 

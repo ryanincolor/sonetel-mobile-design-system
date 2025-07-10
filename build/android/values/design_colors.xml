@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sonetel Design System - Light Colors -->
+<!-- Auto-generated on 7/10/2025 - Do not edit manually -->
+<resources>
+
+    <!-- Solid.Z1 -->
+    <color name="solid_z1">#F5F5F5</color>
+    <!-- Solid.Z0 -->
+    <color name="solid_z0">#FFFFFF</color>
+    <!-- Solid.Z2 -->
+    <color name="solid_z2">#E5E5E5</color>
+    <!-- Solid.Z6 -->
+    <color name="solid_z6">#292929</color>
+    <!-- Solid.Z3 -->
+    <color name="solid_z3">#E0E0E0</color>
+    <!-- Solid.Z4 -->
+    <color name="solid_z4">#B8B8B8</color>
+    <!-- Solid.Z5 -->
+    <color name="solid_z5">#666666</color>
+    <!-- Solid.Z7 -->
+    <color name="solid_z7">#0A0A0A</color>
+    <!-- On-Surface.on-surface-inverse -->
+    <color name="on_surface_on_surface_inverse">#0A0A0A</color>
+    <!-- On-Surface.on-surface-secondary -->
+    <color name="on_surface_on_surface_secondary">#808080</color>
+    <!-- On-Surface.on-surface-tertiary -->
+    <color name="on_surface_on_surface_tertiary">#333333</color>
+    <!-- On-Surface.on-surface-primary -->
+    <color name="on_surface_on_surface_primary">#FFFFFF</color>
+    <!-- Accents.purple -->
+    <color name="accents_purple">#AAA1F1</color>
+    <!-- Accents.yellow -->
+    <color name="accents_yellow">#FFEF62</color>
+    <!-- Accents.orange -->
+    <color name="accents_orange">#FF9E9E</color>
+    <!-- Accents.blue -->
+    <color name="accents_blue">#638EFF</color>
+    <!-- Accents.green -->
+    <color name="accents_green">#7AD085</color>
+    <!-- Accents.pink -->
+    <color name="accents_pink">#FF68B0</color>
+    <!-- on-accent-surface-secondary -->
+    <color name="on_accent_surface_secondary">#616161</color>
+    <!-- Alert.critical -->
+    <color name="alert_critical">#FF0000</color>
+    <!-- on-accent-surface-primary -->
+    <color name="on_accent_surface_primary">#111111</color>
+    <!-- Transparent.T1 -->
+    <color name="transparent_t1">#0000000A</color>
+    <!-- Transparent.T2 -->
+    <color name="transparent_t2">#00000014</color>
+    <!-- Transparent.T3 -->
+    <color name="transparent_t3">#0000001F</color>
+    <!-- Transparent.T4 -->
+    <color name="transparent_t4">#00000047</color>
+    <!-- Transparent.T5 -->
+    <color name="transparent_t5">#00000099</color>
+    <!-- Transparent.T6 -->
+    <color name="transparent_t6">#000000D6</color>
+    <!-- Transparent.T7 -->
+    <color name="transparent_t7">#000000</color>
+
+</resources>

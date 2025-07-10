@@ -897,17 +897,27 @@ enum ButtonVariant {
                   <div className="p-3 bg-muted/20 rounded-lg">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-medium">Font Size</span>
-                      <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
-                        {buttonConfig.size === "Extra Small"
-                          ? "12px"
-                          : buttonConfig.size === "Small" ||
-                              buttonConfig.size === "Medium"
-                            ? "14px"
-                            : "18px"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
+                          {buttonConfig.size === "Extra Small"
+                            ? "12px"
+                            : buttonConfig.size === "Small" ||
+                                buttonConfig.size === "Medium"
+                              ? "14px"
+                              : "20px"}
+                        </span>
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                          {buttonConfig.size === "Extra Small"
+                            ? "font.size.xs"
+                            : buttonConfig.size === "Small" ||
+                                buttonConfig.size === "Medium"
+                              ? "font.size.sm"
+                              : "font.size.lg"}
+                        </span>
+                      </div>
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      Fixed value, not tokenized
+                      Design token
                     </div>
                   </div>
 
@@ -915,20 +925,51 @@ enum ButtonVariant {
                   <div className="p-3 bg-muted/20 rounded-lg">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-medium">Padding</span>
-                      <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
-                        {buttonConfig.size === "Extra Small"
-                          ? "6px 12px"
-                          : buttonConfig.size === "Small"
-                            ? "8px 16px"
-                            : buttonConfig.size === "Medium"
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
+                          {buttonConfig.size === "Extra Small"
+                            ? "4px 12px"
+                            : buttonConfig.size === "Small"
                               ? "8px 16px"
-                              : buttonConfig.size === "Large"
-                                ? "16px 24px"
-                                : "16px 20px"}
-                      </span>
+                              : buttonConfig.size === "Medium"
+                                ? "8px 16px"
+                                : buttonConfig.size === "Large"
+                                  ? "16px 24px"
+                                  : "16px 20px"}
+                        </span>
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                          {buttonConfig.size === "Extra Small"
+                            ? "spacing.02×spacing.04"
+                            : buttonConfig.size === "Small"
+                              ? "spacing.03×spacing.05"
+                              : buttonConfig.size === "Medium"
+                                ? "spacing.03×spacing.05"
+                                : buttonConfig.size === "Large"
+                                  ? "spacing.05×spacing.07"
+                                  : "spacing.05×spacing.06"}
+                        </span>
+                      </div>
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      Fixed values, not tokenized
+                      Design tokens
+                    </div>
+                  </div>
+
+                  {/* Font Weight */}
+                  <div className="p-3 bg-muted/20 rounded-lg">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium">Font Weight</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
+                          600
+                        </span>
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                          font.weight.bold
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Design token
                     </div>
                   </div>
 
@@ -1066,8 +1107,9 @@ enum ButtonVariant {
                     <span className="font-medium">
                       Non-tokenized properties:
                     </span>{" "}
-                    Height, border-radius, font-size, padding use fixed values
-                    defined in the component specification.
+                    Height and border-radius use fixed values. All other
+                    properties (padding, font-size, font-weight) use design
+                    tokens.
                   </div>
                 </div>
               </div>

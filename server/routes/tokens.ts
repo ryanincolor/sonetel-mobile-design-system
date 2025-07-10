@@ -77,8 +77,8 @@ export const handleTokenStats: RequestHandler = (req, res) => {
     };
 
     lastUpdated =
-      checkLastUpdated("./dist/ios/stats.json") ||
-      checkLastUpdated("./dist/android/stats.json");
+      checkLastUpdated("./build/ios/stats.json") ||
+      checkLastUpdated("./build/android/stats.json");
 
     const stats: TokenStats = {
       total: colorCount + typographyCount + spacingCount + borderRadiusCount,

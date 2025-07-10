@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sonetel Design System - Dimensions -->
+<!-- Auto-generated on 7/10/2025 - Do not edit manually -->
+<resources>
+
+    <!-- Spacing -->
+    <!-- spacing.2xs -->
+    <dimen name="spacing_2xs">2dp</dimen>
+    <!-- spacing.s -->
+    <dimen name="spacing_s">8dp</dimen>
+    <!-- spacing.2xl -->
+    <dimen name="spacing_2xl">24dp</dimen>
+    <!-- spacing.m -->
+    <dimen name="spacing_m">12dp</dimen>
+    <!-- spacing.xl -->
+    <dimen name="spacing_xl">20dp</dimen>
+    <!-- spacing.xs -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <!-- spacing.l -->
+    <dimen name="spacing_l">16dp</dimen>
+    <!-- spacing.6xl -->
+    <dimen name="spacing_6xl">48dp</dimen>
+    <!-- spacing.3xl -->
+    <dimen name="spacing_3xl">28dp</dimen>
+    <!-- spacing.4xl -->
+    <dimen name="spacing_4xl">32dp</dimen>
+    <!-- spacing.5xl -->
+    <dimen name="spacing_5xl">20dp</dimen>
+    <!-- spacing.7xl -->
+    <dimen name="spacing_7xl">56dp</dimen>
+    <!-- spacing.8xl -->
+    <dimen name="spacing_8xl">64dp</dimen>
+    <!-- spacing.9xl -->
+    <dimen name="spacing_9xl">72dp</dimen>
+    <!-- spacing.10xl -->
+    <dimen name="spacing_10xl">80dp</dimen>
+    <!-- spacing.11xl -->
+    <dimen name="spacing_11xl">96dp</dimen>
+    <!-- spacing.12xl -->
+    <dimen name="spacing_12xl">128dp</dimen>
+
+    <!-- Border Radius -->
+    <!-- large -->
+    <dimen name="large">20dp</dimen>
+    <!-- medium -->
+    <dimen name="medium">16dp</dimen>
+    <!-- small -->
+    <dimen name="small">8dp</dimen>
+
+</resources>

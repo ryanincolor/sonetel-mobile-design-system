@@ -372,7 +372,7 @@ async function generateAndroidTokens() {
   console.log("🚀 Starting Android token generation...");
 
   // Clean and create output directory
-  const outputDir = "./dist/android";
+  const outputDir = "./build/android";
   if (fs.existsSync(outputDir)) {
     fs.rmSync(outputDir, { recursive: true });
     console.log("🧹 Cleaned existing Android output");

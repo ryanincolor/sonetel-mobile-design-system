@@ -5,11 +5,11 @@ import fs from "fs";
 console.log("🚀 Starting iOS token generation...");
 
 // Clean entire dist directory to remove all old files
-if (fs.existsSync("./dist")) {
-  fs.rmSync("./dist", { recursive: true, force: true });
-  console.log("🧹 Cleaned entire dist directory");
+if (fs.existsSync("./build")) {
+  fs.rmSync("./build", { recursive: true, force: true });
+  console.log("🧹 Cleaned entire build directory");
 }
-fs.mkdirSync("./dist/ios", { recursive: true });
+fs.mkdirSync("./build/ios", { recursive: true });
 console.log("��� Created fresh dist/ios directory");
 
 try {
@@ -343,7 +343,7 @@ Color(UIColor.solidZ0)
 // - App's overrideUserInterfaceStyle setting
 */`;
 
-    fs.writeFileSync("./dist/ios/DesignSystemColors.swift", colorSwift);
+    fs.writeFileSync("./build/ios/DesignSystemColors.swift", colorSwift);
     console.log("✅ Generated DesignSystemColors.swift (adaptive colors)");
   }
 
@@ -450,7 +450,7 @@ let titleFont = UIFont.systemFont(
 */`;
 
     fs.writeFileSync(
-      "./dist/ios/DesignSystemTypography.swift",
+      "./build/ios/DesignSystemTypography.swift",
       typographySwift,
     );
     console.log("✅ Generated DesignSystemTypography.swift");
@@ -534,7 +534,7 @@ stackView.spacing = DesignSystemSpacing.spacingLg
 button.contentEdgeInsets = .all(DesignSystemSpacing.spacingSm)
 */`;
 
-    fs.writeFileSync("./dist/ios/DesignSystemSpacing.swift", spacingSwift);
+    fs.writeFileSync("./build/ios/DesignSystemSpacing.swift", spacingSwift);
     console.log("✅ Generated DesignSystemSpacing.swift");
   }
 
@@ -548,10 +548,10 @@ button.contentEdgeInsets = .all(DesignSystemSpacing.spacingSm)
     lastUpdated: new Date().toISOString(),
   };
 
-  fs.writeFileSync("./dist/ios/stats.json", JSON.stringify(stats, null, 2));
+  fs.writeFileSync("./build/ios/stats.json", JSON.stringify(stats, null, 2));
 
   console.log("🎉 iOS token generation complete!");
-  console.log(`📁 Output directory: ./dist/ios/`);
+  console.log(`📁 Output directory: ./build/ios/`);
 
   if (colorTokensLight.length > 0 || colorTokensDark.length > 0) {
     console.log(`   • Colors: DesignSystemColors.swift (adaptive light/dark)`);

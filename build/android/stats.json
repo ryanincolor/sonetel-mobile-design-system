@@ -1,0 +1,32 @@
+{
+  "colors": 28,
+  "typography": 38,
+  "spacing": 17,
+  "borderRadius": 3,
+  "totalTokens": 114,
+  "lastUpdated": "2025-07-10T13:42:52.980Z",
+  "platforms": {
+    "ios": {
+      "files": [
+        "DesignSystemColors.swift",
+        "DesignSystemTypography.swift",
+        "DesignSystemSpacing.swift"
+      ],
+      "components": [
+        "mobile-components/Button.md"
+      ]
+    },
+    "android": {
+      "files": [
+        "values/design_colors.xml",
+        "values/design_dimens.xml",
+        "values-night/design_colors.xml",
+        "SonetelDesignTokens.kt",
+        "SonetelColorScheme.kt"
+      ],
+      "components": [
+        "mobile-components/Button.md"
+      ]
+    }
+  }
+}

@@ -168,7 +168,7 @@ async function generateIOSCode(
       mode === "Light"
         ? "DesignSystemLightColors.swift"
         : "DesignSystemDarkColors.swift";
-    const filePath = `./dist/ios/${filename}`;
+    const filePath = `./build/ios/${filename}`;
 
     if (fs.existsSync(filePath)) {
       const content = fs.readFileSync(filePath, "utf8");
@@ -190,8 +190,8 @@ async function generateAndroidCode(
     await execAsync("npm run tokens:build:android");
 
     // Read the generated Android files
-    const xmlPath = "./dist/android/colors.xml";
-    const kotlinPath = "./dist/android/DesignSystemColors.kt";
+    const xmlPath = "./build/android/colors.xml";
+    const kotlinPath = "./build/android/DesignSystemColors.kt";
 
     if (fs.existsSync(xmlPath) && fs.existsSync(kotlinPath)) {
       const xml = fs.readFileSync(xmlPath, "utf8");

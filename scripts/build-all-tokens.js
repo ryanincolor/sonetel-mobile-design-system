@@ -12,7 +12,7 @@ import { execSync } from "child_process";
 console.log("🚀 Starting unified token generation for iOS and Android...");
 
 // Clean output directories
-const outputDir = "./dist";
+const outputDir = "./build";
 if (fs.existsSync(outputDir)) {
   fs.rmSync(outputDir, { recursive: true });
   console.log("🧹 Cleaned existing output");
@@ -276,7 +276,7 @@ Color.solidZ0
 Text("Hello").foregroundColor(.onSurfacePrimary)
 */`;
 
-  fs.writeFileSync("./dist/ios/DesignSystemColors.swift", swift);
+  fs.writeFileSync("./build/ios/DesignSystemColors.swift", swift);
 }
 
 function generateIOSTypography(typography) {
@@ -336,7 +336,7 @@ extension Font {
 }
 #endif`;
 
-  fs.writeFileSync("./dist/ios/DesignSystemTypography.swift", swift);
+  fs.writeFileSync("./build/ios/DesignSystemTypography.swift", swift);
 }
 
 function generateIOSSpacing(spacing, borderRadius) {
@@ -397,7 +397,7 @@ extension UIEdgeInsets {
     }
 }`;
 
-  fs.writeFileSync("./dist/ios/DesignSystemSpacing.swift", swift);
+  fs.writeFileSync("./build/ios/DesignSystemSpacing.swift", swift);
 }
 
 function generateAndroidFiles(tokens) {
@@ -455,8 +455,8 @@ function generateAndroidColors(lightColors, darkColors) {
   darkXML += `
 </resources>`;
 
-  fs.writeFileSync("./dist/android/values/design_colors.xml", lightXML);
-  fs.writeFileSync("./dist/android/values-night/design_colors.xml", darkXML);
+  fs.writeFileSync("./build/android/values/design_colors.xml", lightXML);
+  fs.writeFileSync("./build/android/values-night/design_colors.xml", darkXML);
 }
 
 function generateAndroidDimens(spacing, borderRadius) {
@@ -493,7 +493,7 @@ function generateAndroidDimens(spacing, borderRadius) {
   xml += `
 </resources>`;
 
-  fs.writeFileSync("./dist/android/values/design_dimens.xml", xml);
+  fs.writeFileSync("./build/android/values/design_dimens.xml", xml);
 }
 
 function generateAndroidCompose(tokens) {
@@ -573,7 +573,7 @@ object SonetelDesignTokens {
   kotlin += `
 }`;
 
-  fs.writeFileSync("./dist/android/SonetelDesignTokens.kt", kotlin);
+  fs.writeFileSync("./build/android/SonetelDesignTokens.kt", kotlin);
 }
 
 function generateMaterial3Theme(tokens) {
@@ -612,14 +612,14 @@ object SonetelColorScheme {
     )
 }`;
 
-  fs.writeFileSync("./dist/android/SonetelColorScheme.kt", kotlin);
+  fs.writeFileSync("./build/android/SonetelColorScheme.kt", kotlin);
 }
 
 function generateMobileComponentSpecs() {
   console.log("📱 Copying mobile component specifications...");
 
-  // Create mobile-components directory in dist
-  const mobileComponentsDir = "./dist/mobile-components";
+  // Create mobile-components directory in build
+  const mobileComponentsDir = "./build/mobile-components";
   if (!fs.existsSync(mobileComponentsDir)) {
     fs.mkdirSync(mobileComponentsDir, { recursive: true });
   }
@@ -669,9 +669,12 @@ function generateStats(tokens) {
     },
   };
 
-  fs.writeFileSync("./dist/ios/stats.json", JSON.stringify(stats, null, 2));
-  fs.writeFileSync("./dist/android/stats.json", JSON.stringify(stats, null, 2));
-  fs.writeFileSync("./dist/stats.json", JSON.stringify(stats, null, 2));
+  fs.writeFileSync("./build/ios/stats.json", JSON.stringify(stats, null, 2));
+  fs.writeFileSync(
+    "./build/android/stats.json",
+    JSON.stringify(stats, null, 2),
+  );
+  fs.writeFileSync("./build/stats.json", JSON.stringify(stats, null, 2));
 }
 
 // Utility functions

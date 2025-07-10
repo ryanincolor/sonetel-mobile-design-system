@@ -121,7 +121,7 @@ async function syncToIOS(useGit) {
   // Copy Swift files
   let copiedFiles = [];
   for (const file of CONFIG.ios.files) {
-    const sourcePath = path.join("./dist/ios", file);
+    const sourcePath = path.join("./build/ios", file);
     const destPath = path.join(designSystemPath, file);
 
     if (fs.existsSync(sourcePath)) {
@@ -167,7 +167,7 @@ async function syncToAndroid(useGit) {
 
   // Copy resource files
   for (const file of CONFIG.android.files.resources) {
-    const sourcePath = path.join("./dist/android", file.src);
+    const sourcePath = path.join("./build/android", file.src);
     const destPath = path.join(resPath, file.dest);
 
     // Ensure destination directory exists
@@ -185,7 +185,7 @@ async function syncToAndroid(useGit) {
 
   // Copy Kotlin files
   for (const file of CONFIG.android.files.kotlin) {
-    const sourcePath = path.join("./dist/android", file.src);
+    const sourcePath = path.join("./build/android", file.src);
     const targetPath =
       file.path === "themeKotlinPath" ? themeKotlinPath : kotlinPath;
     const destPath = path.join(targetPath, file.dest);
@@ -206,7 +206,7 @@ async function syncToAndroid(useGit) {
 }
 
 function copyMobileComponentSpecs() {
-  const sourceDir = "./dist/mobile-components";
+  const sourceDir = "./build/mobile-components";
 
   if (!fs.existsSync(sourceDir)) {
     console.log("⚠️  No mobile component specifications found");
@@ -337,7 +337,7 @@ async function pushToRemote() {
 }
 
 function generateReport() {
-  const stats = JSON.parse(fs.readFileSync("./dist/stats.json", "utf8"));
+  const stats = JSON.parse(fs.readFileSync("./build/stats.json", "utf8"));
 
   console.log(`
 📊 Design System Sync Report
