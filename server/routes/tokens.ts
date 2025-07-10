@@ -53,8 +53,10 @@ export const handleTokenStats: RequestHandler = (req, res) => {
       return count;
     };
 
-    // Count colors (only count light mode to avoid double counting)
-    colorCount = countTokensInFile("./tokens/Sys/Color/Light.json");
+    // Count colors (count both light and dark to match build script)
+    const lightColorCount = countTokensInFile("./tokens/Sys/Color/Light.json");
+    const darkColorCount = countTokensInFile("./tokens/Sys/Color/Dark.json");
+    colorCount = lightColorCount + darkColorCount;
 
     // Count other token types
     typographyCount = countTokensInFile("./tokens/Sys/Typography.json");
@@ -120,10 +122,10 @@ export const handleTokenList: RequestHandler = (req, res) => {
     };
 
     // Build reference map from core tokens
-    buildReferenceMap("./tokens/Core/Typography/Value.json", "font");
-    buildReferenceMap("./tokens/Core/Spacings/Mode 1.json", "spacing");
-    buildReferenceMap("./tokens/Core/Archive/Color/Light.json");
-    buildReferenceMap("./tokens/Core/Archive/Color/Dark.json");
+    buildReferenceMap("./tokens/Core/Typography.json");
+    buildReferenceMap("./tokens/Core/Spacings.json", "spacing");
+    buildReferenceMap("./tokens/Core/Colors.json");
+    buildReferenceMap("./tokens/Core/Icons.json");
 
     // Load system tokens
     loadTokensFromFile("./tokens/Sys/Color/Light.json", "color", "Light");

@@ -13,22 +13,19 @@ function loadTokens() {
   console.log("📖 Loading Core tokens...");
 
   const coreTypography = JSON.parse(
-    fs.readFileSync("./tokens/Core/Typography/Value.json", "utf8"),
+    fs.readFileSync("./tokens/Core/Typography.json", "utf8"),
   );
   const coreSpacing = JSON.parse(
-    fs.readFileSync("./tokens/Core/Spacings/Mode 1.json", "utf8"),
+    fs.readFileSync("./tokens/Core/Spacings.json", "utf8"),
   );
 
   // Load Core colors for reference resolution
   let coreColors = {};
   try {
-    const coreLightColors = JSON.parse(
-      fs.readFileSync("./tokens/Core/Archive/Color/Light.json", "utf8"),
+    coreColors = JSON.parse(
+      fs.readFileSync("./tokens/Core/Colors.json", "utf8"),
     );
-    const coreDarkColors = JSON.parse(
-      fs.readFileSync("./tokens/Core/Archive/Color/Dark.json", "utf8"),
-    );
-    coreColors = { ...coreLightColors, ...coreDarkColors };
+    console.log("📖 Loaded Core Colors");
   } catch (e) {
     console.log("ℹ️  Core colors not found");
   }

@@ -44,6 +44,7 @@ function loadAndProcessTokens() {
   // Load all token files
   const coreTypography = loadJSON("./tokens/Core/Typography.json");
   const coreSpacing = loadJSON("./tokens/Core/Spacings.json");
+  const coreIcons = loadJSON("./tokens/Core/Icons.json");
   const sysLightColors = loadJSON("./tokens/Sys/Color/Light.json");
   const sysDarkColors = loadJSON("./tokens/Sys/Color/Dark.json");
   const sysTypography = loadJSON("./tokens/Sys/Typography.json");
@@ -52,17 +53,19 @@ function loadAndProcessTokens() {
 
   // Build reference map for resolution
   const refs = new Map();
-  buildReferenceMap(coreTypography, refs, "font");
+  buildReferenceMap(coreTypography, refs); // Core Typography already has "font" prefix in the JSON structure
   buildReferenceMap(coreSpacing, refs, "spacing");
+  buildReferenceMap(coreIcons, refs);
 
-  // Load core colors for reference resolution
+  // Load core colors for reference resolution (contains Neutral, Archive colors)
   try {
-    const coreLightColors = loadJSON("./tokens/Core/Archive/Color/Light.json");
-    const coreDarkColors = loadJSON("./tokens/Core/Archive/Color/Dark.json");
-    buildReferenceMap(coreLightColors, refs);
-    buildReferenceMap(coreDarkColors, refs);
+    const coreColors = loadJSON("./tokens/Core/Colors.json");
+    buildReferenceMap(coreColors, refs);
+    console.log("✅ Loaded Core Colors for reference resolution");
   } catch (e) {
-    console.log("ℹ️  Core archive colors not found");
+    console.log(
+      "⚠️  Core colors not found, references may not resolve properly",
+    );
   }
 
   buildReferenceMap(sysLightColors, refs);

@@ -16,14 +16,14 @@ try {
   // Load Core tokens for reference resolution
   console.log("📖 Loading Core tokens...");
   const coreColors = JSON.parse(
-    fs.readFileSync("./tokens/Core/Colors/Mode 1.json", "utf8"),
+    fs.readFileSync("./tokens/Core/Colors.json", "utf8"),
   );
 
   // Load Core Typography if it exists
   let coreTypography = {};
   try {
     coreTypography = JSON.parse(
-      fs.readFileSync("./tokens/Core/Typography/Value.json", "utf8"),
+      fs.readFileSync("./tokens/Core/Typography.json", "utf8"),
     );
     console.log("📖 Loaded Core Typography");
   } catch (e) {
@@ -34,7 +34,7 @@ try {
   let coreSpacing = {};
   try {
     coreSpacing = JSON.parse(
-      fs.readFileSync("./tokens/Core/Spacings/Mode 1.json", "utf8"),
+      fs.readFileSync("./tokens/Core/Spacings.json", "utf8"),
     );
     console.log("📖 Loaded Core Spacing");
   } catch (e) {
