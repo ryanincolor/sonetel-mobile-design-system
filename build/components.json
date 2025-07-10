@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2025-07-10T18:22:23.031Z",
+  "generatedAt": "2025-07-10T18:25:20.749Z",
   "components": {
     "button": {
       "version": "1.2.0",
-      "lastModified": "2025-07-10T18:22:23.032Z",
+      "lastModified": "2025-07-10T18:25:20.749Z",
       "files": {
         "android": "components/SonetelButton.kt",
         "ios": "components/SonetelButton.swift",
@@ -13,7 +13,7 @@
       "changes": [
         {
           "version": "1.2.0",
-          "date": "2025-07-10T18:22:23.032Z",
+          "date": "2025-07-10T18:25:20.749Z",
           "description": "Updated Large button: height 48px, min-width 80px, padding 20x16px to match Figma",
           "breaking": false
         },

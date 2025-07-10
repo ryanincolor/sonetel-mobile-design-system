@@ -217,8 +217,4 @@ object SonetelDesignTokens {
     val borderRadiusSmall = small
     val borderRadiusMedium = medium
     val borderRadiusLarge = large
-
-        // MARK: - Accent Blue Aliases (for legacy compatibility)
-    val accentsBluLight = accentsBlueLight
-        val accentsBlueDark = accentsBlueLight  // Fallback to light version for dark theme
 }
