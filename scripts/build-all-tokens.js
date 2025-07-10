@@ -664,15 +664,34 @@ object SonetelDesignTokens {
 
   kotlin += `
 
-        // MARK: - Font Sizes
+                // MARK: - Font Sizes
     val fontSizeXxs = 11.sp
     val fontSizeXs = 12.sp
     val fontSizeSm = 14.sp
     val fontSizeMd = 16.sp
-    val fontSizeLg = 20.sp
-    val fontSizeXl = 24.sp
-    val fontSize2xl = 28.sp
-    val fontSize3xl = 34.sp
+    val fontSizeBase = 18.sp    // Headline small
+    val fontSizeLg = 20.sp      // Headline medium
+    val fontSizeXl = 24.sp      // Headline large
+    val fontSize2xl = 28.sp     // Headline XL
+    val fontSize3xl = 34.sp     // Headline 2xl
+    val fontSize4xl = 40.sp     // Headline 3xl
+    val fontSize5xl = 64.sp     // Display medium
+
+    // MARK: - Line Heights
+    val lineHeight64 = 64.sp    // Display medium
+    val lineHeight46 = 46.sp    // Headline 3xl
+    val lineHeight40 = 40.sp    // Headline 2xl
+    val lineHeight32 = 32.sp    // Headline XL
+    val lineHeight29 = 29.sp    // Headline large
+    val lineHeight24 = 24.sp    // Headline medium
+    val lineHeight22 = 22.sp    // Headline small
+    val lineHeight20 = 20.sp    // Body/Label medium
+    val lineHeight16 = 16.sp    // Body/Label small
+
+    // MARK: - Letter Spacing
+    val letterSpacingTight = (-0.02).sp  // -2% for headings
+    val letterSpacingNormal = 0.sp
+    val letterSpacingWide = 0.02.sp
 
     // MARK: - Border Radius
 `;
@@ -688,6 +707,15 @@ object SonetelDesignTokens {
   });
 
   kotlin += `
+
+    // MARK: - Border Radius Aliases
+    val borderRadiusSmall = small
+    val borderRadiusMedium = medium
+    val borderRadiusLarge = large
+
+    // MARK: - Accent Blue Aliases (for legacy compatibility)
+    val accentsBluLight = accentsBlueLight
+    val accentsBlueDark = accentsBlueDark
 }`;
 
   fs.writeFileSync("./build/android/SonetelDesignTokens.kt", kotlin);
