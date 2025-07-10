@@ -783,21 +783,21 @@ val SonetelMaterial3Typography = Typography(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = SonetelDesignTokens.fontSize3xl,
-        lineHeight = (SonetelDesignTokens.fontSize3xl.value * 1.12f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight40,
         letterSpacing = (-0.25).sp
     ),
     displayMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = SonetelDesignTokens.fontSize2xl,
-        lineHeight = (SonetelDesignTokens.fontSize2xl.value * 1.16f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight32,
         letterSpacing = 0.sp
     ),
     displaySmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = SonetelDesignTokens.fontSizeXl,
-        lineHeight = (SonetelDesignTokens.fontSizeXl.value * 1.22f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight29,
         letterSpacing = 0.sp
     ),
 
@@ -806,21 +806,21 @@ val SonetelMaterial3Typography = Typography(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
         fontSize = SonetelDesignTokens.fontSizeLg,
-        lineHeight = (SonetelDesignTokens.fontSizeLg.value * 1.25f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight24,
         letterSpacing = 0.sp
     ),
     headlineMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
         fontSize = SonetelDesignTokens.fontSizeMd,
-        lineHeight = (SonetelDesignTokens.fontSizeMd.value * 1.25f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight20,
         letterSpacing = 0.sp
     ),
     headlineSmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
         fontSize = SonetelDesignTokens.fontSizeSm,
-        lineHeight = (SonetelDesignTokens.fontSizeSm.value * 1.33f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight20,
         letterSpacing = 0.sp
     ),
 
@@ -829,21 +829,21 @@ val SonetelMaterial3Typography = Typography(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
         fontSize = SonetelDesignTokens.fontSizeLg,
-        lineHeight = (SonetelDesignTokens.fontSizeLg.value * 1.28f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight24,
         letterSpacing = 0.sp
     ),
     titleMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = SonetelDesignTokens.fontSizeMd,
-        lineHeight = (SonetelDesignTokens.fontSizeMd.value * 1.5f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight24,
         letterSpacing = 0.15.sp
     ),
     titleSmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = SonetelDesignTokens.fontSizeSm,
-        lineHeight = (SonetelDesignTokens.fontSizeSm.value * 1.43f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight20,
         letterSpacing = 0.1.sp
     ),
 
@@ -852,21 +852,21 @@ val SonetelMaterial3Typography = Typography(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = SonetelDesignTokens.fontSizeMd,
-        lineHeight = (SonetelDesignTokens.fontSizeMd.value * 1.5f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight24,
         letterSpacing = 0.5.sp
     ),
     bodyMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = SonetelDesignTokens.fontSizeSm,
-        lineHeight = (SonetelDesignTokens.fontSizeSm.value * 1.43f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight20,
         letterSpacing = 0.25.sp
     ),
     bodySmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = SonetelDesignTokens.fontSizeXs,
-        lineHeight = (SonetelDesignTokens.fontSizeXs.value * 1.33f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight16,
         letterSpacing = 0.4.sp
     ),
 
@@ -875,21 +875,21 @@ val SonetelMaterial3Typography = Typography(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = SonetelDesignTokens.fontSizeSm,
-        lineHeight = (SonetelDesignTokens.fontSizeSm.value * 1.43f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight20,
         letterSpacing = 0.1.sp
     ),
     labelMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = SonetelDesignTokens.fontSizeXs,
-        lineHeight = (SonetelDesignTokens.fontSizeXs.value * 1.33f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight16,
         letterSpacing = 0.5.sp
     ),
     labelSmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = SonetelDesignTokens.fontSizeXxs,
-        lineHeight = (SonetelDesignTokens.fontSizeXxs.value * 1.45f).sp,
+                lineHeight = SonetelDesignTokens.lineHeight16,
         letterSpacing = 0.5.sp
         )
 )
