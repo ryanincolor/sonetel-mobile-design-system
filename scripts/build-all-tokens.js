@@ -492,7 +492,7 @@ extension UIEdgeInsets {
 }
 
 function generateAndroidFiles(tokens) {
-  console.log("🤖 Generating Android files...");
+  console.log("���� Generating Android files...");
 
   // Generate XML resources
   generateAndroidColors(tokens.lightColors, tokens.darkColors);
@@ -991,6 +991,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import com.sonetel.designsystem.SonetelDesignTokens
 
 /**
@@ -1077,11 +1078,11 @@ enum class SonetelButtonSize(
     val fontSize: TextUnit,
     val minWidth: Dp?
 ) {
-            ExtraSmall(SonetelDesignTokens.spacing4xl, SonetelDesignTokens.spacingM, SonetelDesignTokens.spacingXs, SonetelDesignTokens.fontSizeXs, null),
+                    ExtraSmall(SonetelDesignTokens.spacing4xl, SonetelDesignTokens.spacingM, SonetelDesignTokens.spacingXs, SonetelDesignTokens.fontSizeXs, null),
     Small(SonetelDesignTokens.spacing10xl, SonetelDesignTokens.spacingL, SonetelDesignTokens.spacingS, SonetelDesignTokens.fontSizeSm, null),
     Medium(SonetelDesignTokens.spacing4xl + 4.dp, SonetelDesignTokens.spacingL, SonetelDesignTokens.spacingS, SonetelDesignTokens.fontSizeSm, SonetelDesignTokens.spacing9xl),
     Large(SonetelDesignTokens.spacing6xl, SonetelDesignTokens.spacingXl, SonetelDesignTokens.spacingL, SonetelDesignTokens.fontSizeLg, SonetelDesignTokens.spacing10xl),
-    ExtraLarge(SonetelDesignTokens.spacing7xl, SonetelDesignTokens.spacingXl, SonetelDesignTokens.spacingL, SonetelDesignTokens.fontSizeLg, SonetelDesignTokens.spacing12xl)
+    ExtraLarge(SonetelDesignTokens.spacing7xl, SonetelDesignTokens.spacingXl, SonetelDesignTokens.spacingL, SonetelDesignTokens.fontSizeLg, 280.dp)
 }
 
 /**
@@ -1103,14 +1104,15 @@ enum class SonetelButtonVariant(
 /**
  * Preview composables for development and testing
  */
+@Preview(showBackground = true)
 @Composable
 internal fun SonetelButtonPreview() {
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Size variants
-        SonetelButtonSize.values().forEach { size ->
+                // Size variants
+        SonetelButtonSize.entries.forEach { size ->
             SonetelButton(
                 text = size.name,
                 onClick = { },
@@ -1119,7 +1121,7 @@ internal fun SonetelButtonPreview() {
         }
 
         // Style variants
-        SonetelButtonVariant.values().forEach { variant ->
+        SonetelButtonVariant.entries.forEach { variant ->
             SonetelButton(
                 text = variant.name,
                 onClick = { },
@@ -1255,7 +1257,7 @@ public enum SonetelButtonSize {
         switch self {
         case .medium: return DesignSystemSpacing.spacing9xl
         case .large: return DesignSystemSpacing.spacing10xl
-        case .extraLarge: return DesignSystemSpacing.spacing12xl
+                case .extraLarge: return 280
         default: return nil
         }
     }

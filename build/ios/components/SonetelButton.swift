@@ -104,7 +104,7 @@ public enum SonetelButtonSize {
         switch self {
         case .medium: return DesignSystemSpacing.spacing9xl
         case .large: return DesignSystemSpacing.spacing10xl
-        case .extraLarge: return DesignSystemSpacing.spacing12xl
+                case .extraLarge: return 280
         default: return nil
         }
     }
