@@ -1,11 +1,9 @@
 {
   "tokenSetOrder": [
-    "Core/Colors/Mode 1",
-    "Core/Archive/Color/Light",
-    "Core/Archive/Color/Dark",
-    "Core/Typography/Value",
-    "Core/Spacings/Mode 1",
-    "Core/Icons/Mode 1",
+    "Core/Colors",
+    "Core/Typography",
+    "Core/Spacings",
+    "Core/Icons",
     "Sys/Color/Light",
     "Sys/Color/Dark",
     "Sys/Typography",

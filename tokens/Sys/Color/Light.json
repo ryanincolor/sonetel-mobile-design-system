@@ -43,7 +43,7 @@
       "type": "color"
     },
     "on-surface-tertiary": {
-      "value": "#999999",
+      "value": "{Solid.Z3}",
       "type": "color"
     },
     "on-surface-primary": {

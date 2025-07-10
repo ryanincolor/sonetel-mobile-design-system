@@ -4,12 +4,10 @@
     "name": "Mode 1",
     "group": "Core/Colors",
     "selectedTokenSets": {
-      "Core/Colors/Mode 1": "enabled",
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "enabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -77,12 +75,10 @@
     "name": "Light",
     "group": "Core/Archive/Color",
     "selectedTokenSets": {
-      "Core/Archive/Color/Light": "enabled",
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -126,12 +122,10 @@
     "name": "Dark",
     "group": "Core/Archive/Color",
     "selectedTokenSets": {
-      "Core/Archive/Color/Dark": "enabled",
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -175,12 +169,10 @@
     "name": "Mode 1",
     "group": "Core/Spacings",
     "selectedTokenSets": {
-      "Core/Spacings/Mode 1": "enabled",
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "enabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -206,12 +198,10 @@
     "name": "Value",
     "group": "Core/Typography",
     "selectedTokenSets": {
-      "Core/Typography/Value": "enabled",
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "enabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -248,12 +238,10 @@
     "name": "Mode 1",
     "group": "Core/Icons",
     "selectedTokenSets": {
-      "Core/Icons/Mode 1": "enabled",
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -271,11 +259,11 @@
     "name": "Value",
     "group": "MSys/Spacing",
     "selectedTokenSets": {
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
       "Sys/Spacing": "enabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -306,10 +294,10 @@
     "group": "MSys/Color",
     "selectedTokenSets": {
       "Sys/Color/Light": "enabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -351,11 +339,11 @@
     "name": "Dark",
     "group": "MSys/Color",
     "selectedTokenSets": {
-      "Sys/Color/Light": "disabled",
       "Sys/Color/Dark": "enabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -397,11 +385,11 @@
     "name": "Mode 1",
     "group": "MSys/Typography",
     "selectedTokenSets": {
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
       "Sys/Typography": "enabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -452,11 +440,11 @@
     "name": "Mode 1",
     "group": "MSys/Border Radius",
     "selectedTokenSets": {
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "enabled"
+      "Sys/Border Radius": "enabled",
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -472,11 +460,10 @@
     "name": "Value",
     "group": "Sys/Spacing",
     "selectedTokenSets": {
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -507,10 +494,10 @@
     "group": "Sys/Color",
     "selectedTokenSets": {
       "Sys/Color/Light": "enabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -552,11 +539,11 @@
     "name": "Dark",
     "group": "Sys/Color",
     "selectedTokenSets": {
-      "Sys/Color/Light": "disabled",
       "Sys/Color/Dark": "enabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -598,11 +585,10 @@
     "name": "Mode 1",
     "group": "Sys/Typography",
     "selectedTokenSets": {
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -653,11 +639,10 @@
     "name": "Mode 1",
     "group": "Sys/Border Radius",
     "selectedTokenSets": {
-      "Sys/Color/Light": "disabled",
-      "Sys/Color/Dark": "disabled",
-      "Sys/Typography": "disabled",
-      "Sys/Spacing": "disabled",
-      "Sys/Border Radius": "disabled"
+      "Core/Colors": "disabled",
+      "Core/Typography": "disabled",
+      "Core/Spacings": "disabled",
+      "Core/Icons": "disabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
