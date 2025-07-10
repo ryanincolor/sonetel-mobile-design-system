@@ -1,15 +1,54 @@
-# Fusion Starter
+# Sonetel Mobile Design System
 
-A production-ready full-stack React application template with integrated Express server, featuring React Router 6 SPA mode, TypeScript, Vitest, Zod and modern tooling.
+This is the **shared mobile design system** for the Sonetel native iOS and Android apps.
+All design tokens are exported from **Figma using Token Studio** and stored in this repo.
 
-While the starter comes with a express server, only create endpoint when strictly necessary, for example to encapsulate logic that must leave in the server, such as private keys handling, or certain DB operations, db...
+The exported tokens are structured in **Token Studio JSON format**, and transformed per platform using **Style Dictionary**.
 
-## Tech Stack
+## 📁 Token Types
 
-- **Frontend**: React 18 + React Router 6 (spa) + TypeScript + Vite + TailwindCSS 3
-- **Backend**: Express server integrated with Vite dev server
-- **Testing**: Vitest
-- **UI**: Radix UI + TailwindCSS 3 + Lucide React icons
+This system includes tokens for:
+
+- **Colors** (light + dark themes)
+- **Typography**
+- **Spacing**
+- **Radius**
+- **Elevation / shadows**
+
+## 🔄 Token Workflow
+
+1. Tokens are exported from **Figma** using Token Studio
+2. JSON files are stored under `/tokens` with organized structure:
+   - **Core tokens**: Primitive values in `/tokens/Core/`
+   - **System tokens**: Semantic values in `/tokens/Sys/`
+3. **Advanced token processing** with automatic reference resolution:
+   - Smart reference mapping across token hierarchies
+   - Automatic light/dark mode color pairing
+   - Cross-platform naming convention handling
+   - **iOS**: Adaptive colors with UITraitCollection support
+   - **Android**: XML resources + Jetpack Compose Material 3 integration
+
+## 📱 Platform Integration
+
+### ✅ Android (Jetpack Compose)
+
+- Use **Material 3** as base
+- Apply tokens in `Theme.kt` using `MaterialTheme(...)`
+- Consume output in Android repo via Git submodule or CI pull
+- Example usage: `AppTheme { ... }`
+
+### ✅ iOS (SwiftUI)
+
+- Use `Theme.swift` or equivalent to expose color, font, spacing constants
+- Consume output via SwiftGen, SPM, or embedded Swift files
+- Support Dark Mode, Dynamic Type, and accessibility scaling
+
+### 🧠 Builder.io Integration
+
+- This repo is the **single source of truth** for all mobile design tokens
+- Builder.io's native mobile SDK should import and apply the token values to generated components
+- All components should respect platform standards while inheriting shared visual styles
+- **No hardcoded values** — only token references
 
 ## Quick Start
 
@@ -17,15 +56,11 @@ While the starter comes with a express server, only create endpoint when strictl
 # Install dependencies
 npm install
 
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
+# 🚀 One command to update both mobile apps
+npm run sync:all:git
 ```
+
+**That's it!** This single command generates fresh tokens and syncs them to both iOS and Android projects with git branches.
 
 ## Development Commands
 
@@ -44,14 +79,36 @@ npm test          # Run Vitest tests
 Build design tokens from the token files:
 
 ```bash
-npm run tokens:build        # Generate iOS Swift files from design tokens
+npm run tokens:build          # Generate tokens for all platforms (iOS + Android)
+npm run tokens:build:ios      # Generate iOS Swift files only
+npm run tokens:build:android  # Generate Android XML and Kotlin files
+npm run tokens:build:all      # Generate tokens for both platforms
 ```
 
-This generates adaptive Swift files with automatic light/dark mode support:
+This generates **production-ready platform-specific files** with advanced features:
 
-- `dist/ios/DesignSystemColors.swift` - Adaptive colors
-- `dist/ios/DesignSystemTypography.swift` - Typography tokens
-- `dist/ios/DesignSystemSpacing.swift` - Spacing and border radius
+**iOS Output (`dist/ios/`):**
+
+- `DesignSystemColors.swift` - **UITraitCollection-based adaptive colors** (automatic light/dark switching)
+- `DesignSystemTypography.swift` - Dynamic Type compatible font sizes and weights
+- `DesignSystemSpacing.swift` - Spacing, border radius + UIEdgeInsets helpers
+
+**Android Output (`dist/android/`):**
+
+- `values/design_colors.xml` - Light theme color resources
+- `values-night/design_colors.xml` - Dark theme color resources
+- `values/design_dimens.xml` - Spacing and radius dimensions
+- `DesignSystemTokens.kt` - **Jetpack Compose object** with Color/dp/sp values
+- `SonetelColorScheme.kt` - **Material 3 ColorScheme** integration
+- `stats.json` - Token generation metadata and counts
+
+**Key Improvements:**
+
+- **Smart reference resolution** - Automatically resolves `{Core.spacing.lg}` style references
+- **Adaptive iOS colors** - Single UIColor that automatically switches between light/dark
+- **Material 3 integration** - Pre-configured ColorScheme for Android apps
+- **Cross-platform consistency** - Same token extraction logic ensures identical output
+- **Production-ready** - Includes usage examples and best practices in generated code
 
 ### Sync Tokens to Mobile Apps
 
@@ -60,15 +117,41 @@ This generates adaptive Swift files with automatic light/dark mode support:
 ```bash
 npm run sync:ios            # Copy tokens to iOS project
 npm run sync:ios:git        # Copy + create git branch and commit
-npm run sync:ios:git:push   # Copy + git operations + push to remote
+npm run sync:ios:push       # Copy + git operations + push to remote
+```
+
+#### Android Sync Commands
+
+```bash
+npm run sync:android        # Copy tokens to Android project
+npm run sync:android:git    # Copy + create git branch and commit
+npm run sync:android:push   # Copy + git operations + push to remote
+```
+
+#### Cross-Platform Sync Commands
+
+```bash
+npm run sync:all            # Sync to both iOS and Android
+npm run sync:all:git        # Sync to both platforms with git operations
+npm run sync:all:push       # Sync to both platforms + git operations + push to remote
 ```
 
 The sync commands:
 
-1. Generate fresh design tokens
-2. Copy Swift files to your iOS project at `../sonetel-mobile-ios/Sonetel Mobile/DesignSystem/`
-3. Optionally create git branches and commit changes
-4. Provide integration reports
+1. **Generate fresh design tokens** using improved extraction engine
+2. **Copy platform-optimized files** to your mobile projects:
+   - **iOS**: Adaptive Swift files to `../sonetel-mobile-ios/Sonetel Mobile/DesignSystem/`
+   - **Android**: XML resources to `app/src/main/res/` and Material 3 Kotlin to `app/src/main/java/com/sonetel/designsystem/`
+3. **Smart git integration** - create feature branches and meaningful commits
+4. **Detailed integration reports** with token counts and usage examples
+
+**Advanced Git Integration:**
+
+- **Automatic branching** - Creates dated branches like `design-system-update-2024-01-15`
+- **Smart commits** - Meaningful commit messages with file summaries
+- **Push automation** - Optional remote push with `--push` commands
+- **Project detection** - Only performs git operations if target is a git repository
+- **Slack notifications** - Optional team notifications via webhook (set `SLACK_WEBHOOK_URL`)
 
 #### Manual Token Status Check
 
@@ -80,22 +163,44 @@ npm run sync:manual         # Trigger manual sync via API
 ## Project Structure
 
 ```
-client/                   # React SPA frontend
-├── pages/                # Route components (Index.tsx = home)
-├── components/ui/        # Pre-built UI component library
-├── App.tsx                # App entry point and with SPA routing setup
-└── global.css            # TailwindCSS 3 theming and global styles
+tokens/                   # Design token definitions (Token Studio JSON format)
+├── Core/                 # Core primitive tokens
+│   ├── Archive/Color/    # Color primitives
+│   ├── Typography/       # Font primitives
+│   └── Spacings/         # Spacing primitives
+└── Sys/                  # System/semantic tokens
+    ├── Color/            # Light & Dark color schemes
+    ├── Typography.json   # Typography scale
+    ├── Spacing.json      # Spacing scale
+    └── Border Radius.json # Radius scale
 
-server/                   # Express API backend
-├── index.ts              # Main server setup (express config + routes)
-└── routes/               # API handlers
+scripts/                  # Build and sync automation
+├── quick-ios-build.js    # iOS Swift generation
+├── quick-android-build-v2.js # Android Kotlin/XML generation
+├── sync-ios.js           # iOS project sync with git
+└── sync-android.js       # Android project sync with git
 
-shared/                   # Types used by both client & server
-└── api.ts                # Example of how to share api interfaces
+dist/                     # Generated platform files
+├── ios/                  # Production-ready Swift files
+│   ├── DesignSystemColors.swift      # UITraitCollection adaptive colors
+│   ├── DesignSystemTypography.swift  # Dynamic Type compatible fonts
+│   ├── DesignSystemSpacing.swift     # Spacing + UIEdgeInsets helpers
+│   └── stats.json                    # Generation metadata
+└── android/              # Material 3 ready Android files
+    ├── values/design_colors.xml      # Light theme resources
+    ├── values/design_dimens.xml      # Spacing/radius dimensions
+    ├── values-night/design_colors.xml # Dark theme resources
+    ├── DesignSystemTokens.kt         # Compose object with all tokens
+    ├── SonetelColorScheme.kt         # Material 3 ColorScheme
+    └── stats.json                    # Generation metadata
 
-tokens/                   # Design token definitions
-├── Core/                 # Core token values
-└── Sys/                  # System tokens (semantic)
+client/                   # Minimal web interface
+├── pages/                # Design system overview pages
+└── components/ui/        # Essential UI components
+
+server/                   # Design system API
+├── routes/               # Token sync and automation APIs
+└── index.ts              # Express server for design system ops
 ```
 
 ## Key Features

@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { handleDemo } from "./routes/demo";
 import {
   handleFigmaSync,
   handleSyncStatus,
@@ -12,6 +11,7 @@ import {
   handleManualSync,
   handleSyncStatus as handleAutomationStatus,
 } from "./routes/automation";
+import { handleTokenStats, handleTokenList } from "./routes/tokens";
 
 export function createServer() {
   const app = express();
@@ -21,19 +21,30 @@ export function createServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Example API routes
-  app.get("/api/ping", (_req, res) => {
-    res.json({ message: "Hello from Express server v2!" });
+  // Health check
+  app.get("/api/health", (_req, res) => {
+    res.json({
+      status: "healthy",
+      service: "Sonetel Mobile Design System",
+      timestamp: new Date().toISOString(),
+    });
   });
 
-  app.get("/api/demo", handleDemo);
+  // Simple ping for debugging
+  app.get("/api/ping", (_req, res) => {
+    res.json({ message: "pong" });
+  });
+
+  // Token data routes
+  app.get("/api/tokens/stats", handleTokenStats);
+  app.get("/api/tokens/list", handleTokenList);
 
   // Token sync routes
   app.post("/api/sync/figma", handleFigmaSync);
   app.get("/api/sync/status", handleSyncStatus);
   app.get("/api/tokens/validate", handleTokenValidation);
 
-  // Automation routes
+  // Automation routes for mobile platform sync
   app.post("/api/automation/sync", handleTokenSync);
   app.post("/api/automation/webhook/figma", handleFigmaWebhook);
   app.post("/api/automation/manual", handleManualSync);

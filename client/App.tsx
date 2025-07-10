@@ -1,219 +1,96 @@
 import "./global.css";
-
-import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import {
-  Home,
-  Palette,
-  Download,
-  Upload,
-  Book,
-  Eye,
-  Settings,
-  Zap,
-} from "lucide-react";
+import { Home, Palette, Download, Eye } from "lucide-react";
 import Index from "./pages/Index";
 import Tokens from "./pages/Tokens";
-import Export from "./pages/Export";
 import Automation from "./pages/Automation";
 import NotFound from "./pages/NotFound";
-
-const queryClient = new QueryClient();
 
 // Navigation Component
 function Navigation() {
   const location = useLocation();
 
-  const navItems = [
-    { path: "/", icon: Home, label: "Overview" },
-    { path: "/tokens", icon: Palette, label: "Tokens" },
-    { path: "/export", icon: Download, label: "Export" },
-    { path: "/automation", icon: Zap, label: "Automation" },
-    { path: "/import", icon: Upload, label: "Import" },
-    { path: "/components", icon: Eye, label: "Components" },
-    { path: "/docs", icon: Book, label: "Documentation" },
-  ];
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
-    <nav className="bg-card border-b border-border">
-      <div className="container">
-        <div className="flex items-center justify-between py-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <Palette className="w-4 h-4 text-white" />
+    <nav className="bg-app-bar border-b border-border sticky top-0 z-50">
+      <div className="container mx-auto px-6">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <Palette className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-foreground">Design System</span>
+            <span className="font-semibold text-lg">Design System</span>
           </div>
 
+          {/* Navigation Links */}
           <div className="flex items-center gap-1">
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.path;
-              return (
-                <a
-                  key={item.path}
-                  href={item.path}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-                  }`}
-                >
-                  <item.icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{item.label}</span>
-                </a>
-              );
-            })}
+            <a
+              href="/"
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive("/")
+                  ? "bg-primary/10 text-primary"
+                  : "text-app-bar-foreground hover:bg-accent hover:text-accent-foreground"
+              }`}
+            >
+              <Home className="w-4 h-4" />
+              Overview
+            </a>
+            <a
+              href="/tokens"
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive("/tokens")
+                  ? "bg-primary/10 text-primary"
+                  : "text-app-bar-foreground hover:bg-accent hover:text-accent-foreground"
+              }`}
+            >
+              <Eye className="w-4 h-4" />
+              Tokens
+            </a>
+            <a
+              href="/automation"
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive("/automation")
+                  ? "bg-primary/10 text-primary"
+                  : "text-app-bar-foreground hover:bg-accent hover:text-accent-foreground"
+              }`}
+            >
+              <Download className="w-4 h-4" />
+              Automation
+            </a>
           </div>
-
-          <button className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors">
-            <Settings className="w-4 h-4" />
-          </button>
         </div>
       </div>
     </nav>
   );
 }
 
-// App Layout Component
-function AppLayout({ children }: { children: React.ReactNode }) {
+// App Component
+function App() {
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      {children}
-    </div>
-  );
-}
-
-// Placeholder Pages
-function ImportPage() {
-  return (
-    <AppLayout>
-      <div className="container py-8">
-        <h1 className="text-3xl font-bold text-foreground mb-4">
-          Import from Figma
-        </h1>
-        <div className="bg-card rounded-xl border border-border p-8 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-            <Upload className="w-8 h-8 text-muted-foreground" />
-          </div>
-          <h3 className="text-lg font-medium text-foreground mb-2">
-            Token Studio Integration
-          </h3>
-          <p className="text-muted-foreground mb-4">
-            Connect your Figma file via Token Studio to automatically sync
-            design tokens
-          </p>
-          <button className="btn-primary">Setup Token Studio Sync</button>
-        </div>
+    <BrowserRouter>
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="pb-safe-bottom">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/tokens" element={<Tokens />} />
+            <Route path="/automation" element={<Automation />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
       </div>
-    </AppLayout>
+    </BrowserRouter>
   );
 }
 
-function ComponentsPage() {
-  return (
-    <AppLayout>
-      <div className="container py-8">
-        <h1 className="text-3xl font-bold text-foreground mb-4">Components</h1>
-        <div className="bg-card rounded-xl border border-border p-8 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-            <Eye className="w-8 h-8 text-muted-foreground" />
-          </div>
-          <h3 className="text-lg font-medium text-foreground mb-2">
-            Component Library
-          </h3>
-          <p className="text-muted-foreground">
-            Interactive component examples and implementation guides coming soon
-          </p>
-        </div>
-      </div>
-    </AppLayout>
-  );
+// Mount the app
+const container = document.getElementById("root");
+if (container) {
+  const root = createRoot(container);
+  root.render(<App />);
 }
-
-function DocsPage() {
-  return (
-    <AppLayout>
-      <div className="container py-8">
-        <h1 className="text-3xl font-bold text-foreground mb-4">
-          Documentation
-        </h1>
-        <div className="bg-card rounded-xl border border-border p-8 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-            <Book className="w-8 h-8 text-muted-foreground" />
-          </div>
-          <h3 className="text-lg font-medium text-foreground mb-2">
-            Implementation Guides
-          </h3>
-          <p className="text-muted-foreground">
-            Comprehensive documentation for implementing the design system
-            across platforms
-          </p>
-        </div>
-      </div>
-    </AppLayout>
-  );
-}
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <AppLayout>
-                <Index />
-              </AppLayout>
-            }
-          />
-          <Route
-            path="/tokens"
-            element={
-              <AppLayout>
-                <Tokens />
-              </AppLayout>
-            }
-          />
-          <Route
-            path="/export"
-            element={
-              <AppLayout>
-                <Export />
-              </AppLayout>
-            }
-          />
-          <Route
-            path="/automation"
-            element={
-              <AppLayout>
-                <Automation />
-              </AppLayout>
-            }
-          />
-          <Route path="/import" element={<ImportPage />} />
-          <Route path="/components" element={<ComponentsPage />} />
-          <Route path="/docs" element={<DocsPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route
-            path="*"
-            element={
-              <AppLayout>
-                <NotFound />
-              </AppLayout>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
-
-createRoot(document.getElementById("root")!).render(<App />);

@@ -120,7 +120,7 @@ export const handleFigmaWebhook: RequestHandler = async (req, res) => {
     console.log("Figma webhook received:", payload);
 
     // Trigger token sync
-    await handleTokenSync(req, res);
+    await handleTokenSync(req, res, () => {});
   } catch (error) {
     console.error("Webhook processing failed:", error);
     res.status(500).json({ error: "Webhook processing failed" });
@@ -129,7 +129,7 @@ export const handleFigmaWebhook: RequestHandler = async (req, res) => {
 
 export const handleManualSync: RequestHandler = async (req, res) => {
   console.log("Manual sync triggered by user");
-  await handleTokenSync(req, res);
+  await handleTokenSync(req, res, () => {});
 };
 
 export const handleSyncStatus: RequestHandler = (req, res) => {

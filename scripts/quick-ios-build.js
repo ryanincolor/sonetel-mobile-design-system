@@ -10,7 +10,7 @@ if (fs.existsSync("./dist")) {
   console.log("🧹 Cleaned entire dist directory");
 }
 fs.mkdirSync("./dist/ios", { recursive: true });
-console.log("📁 Created fresh dist/ios directory");
+console.log("��� Created fresh dist/ios directory");
 
 try {
   // Load Core tokens for reference resolution
@@ -537,6 +537,18 @@ button.contentEdgeInsets = .all(DesignSystemSpacing.spacingSm)
     fs.writeFileSync("./dist/ios/DesignSystemSpacing.swift", spacingSwift);
     console.log("✅ Generated DesignSystemSpacing.swift");
   }
+
+  // Generate stats file
+  const stats = {
+    colors: colorTokensLight.length,
+    typography: typographyTokens.length,
+    spacing: spacingTokens.length,
+    borderRadius: borderRadiusTokens.length,
+    totalTokens: totalTokens,
+    lastUpdated: new Date().toISOString(),
+  };
+
+  fs.writeFileSync("./dist/ios/stats.json", JSON.stringify(stats, null, 2));
 
   console.log("🎉 iOS token generation complete!");
   console.log(`📁 Output directory: ./dist/ios/`);
