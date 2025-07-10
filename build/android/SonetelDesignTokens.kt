@@ -104,9 +104,7 @@ object SonetelDesignTokens {
     /** Accents.yellow */
     val accentsYellowDark = Color(0xFFffef62)    
     /** Accents.orange */
-    val accentsOrangeDark = Color(0xFFff9e9e)    
-    /** Accents.blue */
-    val accentsBlueDark = Color(0xFF638eff)    
+    val accentsOrangeDark = Color(0xFFff9e9e)      
     /** Accents.green */
     val accentsGreenDark = Color(0xFF7ad085)    
     /** Accents.pink */
