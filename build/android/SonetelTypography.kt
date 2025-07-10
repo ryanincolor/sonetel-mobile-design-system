@@ -326,14 +326,14 @@ object SonetelTypography {
         )
     }
 
-    // Label styles for buttons and UI elements
+            // Label styles for buttons and UI elements
     object Label {
         val small = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Medium,
             fontSize = SonetelDesignTokens.fontSizeXxs,  // 11sp
             lineHeight = SonetelDesignTokens.lineHeight16,
-            letterSpacing = 0.5.sp
+            letterSpacing = SonetelDesignTokens.letterSpacingTight
         )
 
         val medium = TextStyle(
@@ -341,7 +341,7 @@ object SonetelTypography {
             fontWeight = FontWeight.Medium,
             fontSize = SonetelDesignTokens.fontSizeXs,  // 12sp
             lineHeight = SonetelDesignTokens.lineHeight16,
-            letterSpacing = 0.5.sp
+            letterSpacing = SonetelDesignTokens.letterSpacingTight
         )
 
         val large = TextStyle(
@@ -349,34 +349,90 @@ object SonetelTypography {
             fontWeight = FontWeight.Medium,
             fontSize = SonetelDesignTokens.fontSizeSm,  // 14sp
             lineHeight = SonetelDesignTokens.lineHeight20,
-            letterSpacing = 0.1.sp
+            letterSpacing = SonetelDesignTokens.letterSpacingTight
+        )
+
+                        val xlarge = TextStyle(
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.Medium,
+            fontSize = SonetelDesignTokens.fontSizeMd,  // 16sp
+            lineHeight = SonetelDesignTokens.lineHeight24,
+            letterSpacing = SonetelDesignTokens.letterSpacingTight
         )
     }
 
-    // Body text styles
+            // Body text styles (with Regular and Prominent variants)
     object Body {
-        val small = TextStyle(
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Normal,
-            fontSize = SonetelDesignTokens.fontSizeXs,  // 12sp
-            lineHeight = SonetelDesignTokens.lineHeight16,
-            letterSpacing = 0.4.sp
-        )
+        object small {
+            val regular = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                fontSize = SonetelDesignTokens.fontSizeXs,  // 12sp
+                lineHeight = SonetelDesignTokens.lineHeight16,
+                letterSpacing = SonetelDesignTokens.letterSpacingTight
+            )
 
-        val medium = TextStyle(
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Normal,
-            fontSize = SonetelDesignTokens.fontSizeSm,  // 14sp
-            lineHeight = SonetelDesignTokens.lineHeight20,
-            letterSpacing = 0.25.sp
-        )
+            val prominent = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Medium,
+                fontSize = SonetelDesignTokens.fontSizeXs,  // 12sp
+                lineHeight = SonetelDesignTokens.lineHeight16,
+                letterSpacing = SonetelDesignTokens.letterSpacingTight
+            )
+        }
 
-        val large = TextStyle(
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Normal,
-            fontSize = SonetelDesignTokens.fontSizeMd,  // 16sp
-            lineHeight = SonetelDesignTokens.lineHeight24,
-            letterSpacing = 0.5.sp
-        )
+        object medium {
+            val regular = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                fontSize = SonetelDesignTokens.fontSizeSm,  // 14sp
+                lineHeight = SonetelDesignTokens.lineHeight18,
+                letterSpacing = SonetelDesignTokens.letterSpacingTight
+            )
+
+            val prominent = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Medium,
+                fontSize = SonetelDesignTokens.fontSizeSm,  // 14sp
+                lineHeight = SonetelDesignTokens.lineHeight18,
+                letterSpacing = SonetelDesignTokens.letterSpacingTight
+            )
+        }
+
+        object large {
+            val regular = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                fontSize = SonetelDesignTokens.fontSizeMd,  // 16sp
+                lineHeight = SonetelDesignTokens.lineHeight20,
+                letterSpacing = SonetelDesignTokens.letterSpacingTight
+            )
+
+            val prominent = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Medium,
+                fontSize = SonetelDesignTokens.fontSizeMd,  // 16sp
+                lineHeight = SonetelDesignTokens.lineHeight20,
+                letterSpacing = SonetelDesignTokens.letterSpacingTight
+            )
+        }
+
+        object xlarge {
+            val regular = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                fontSize = SonetelDesignTokens.fontSizeLg,  // 20sp
+                lineHeight = SonetelDesignTokens.lineHeight22,
+                letterSpacing = SonetelDesignTokens.letterSpacingTight
+            )
+
+            val prominent = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Medium,
+                fontSize = SonetelDesignTokens.fontSizeLg,  // 20sp
+                lineHeight = SonetelDesignTokens.lineHeight22,
+                letterSpacing = SonetelDesignTokens.letterSpacingTight
+            )
+        }
     }
 }

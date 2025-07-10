@@ -135,14 +135,11 @@ enum class SonetelButtonSize(
         textStyle = SonetelTypography.Label.large.copy(fontWeight = FontWeight.SemiBold),
         minWidth = SonetelDesignTokens.spacing10xl
     ),
-    ExtraLarge(
+        ExtraLarge(
         height = SonetelDesignTokens.spacing7xl,
         horizontalPadding = SonetelDesignTokens.spacingXl,
         verticalPadding = SonetelDesignTokens.spacingL,
-        textStyle = SonetelTypography.Label.large.copy(
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = SonetelDesignTokens.letterSpacingTight
-        ),
+                textStyle = SonetelTypography.Label.xlarge.copy(fontWeight = FontWeight.SemiBold),
         minWidth = 280.dp
     )
 }

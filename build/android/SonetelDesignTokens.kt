@@ -186,15 +186,16 @@ object SonetelDesignTokens {
     val fontSize4xl = 40.sp     // Headline 3xl
     val fontSize5xl = 64.sp     // Display medium
 
-    // MARK: - Line Heights
+        // MARK: - Line Heights
     val lineHeight64 = 64.sp    // Display medium
     val lineHeight46 = 46.sp    // Headline 3xl
     val lineHeight40 = 40.sp    // Headline 2xl
     val lineHeight32 = 32.sp    // Headline XL
     val lineHeight29 = 29.sp    // Headline large
     val lineHeight24 = 24.sp    // Headline medium
-    val lineHeight22 = 22.sp    // Headline small
+    val lineHeight22 = 22.sp    // Headline small, Body xlarge
     val lineHeight20 = 20.sp    // Body/Label medium
+    val lineHeight18 = 18.sp    // Body medium
     val lineHeight16 = 16.sp    // Body/Label small
 
     // MARK: - Letter Spacing
