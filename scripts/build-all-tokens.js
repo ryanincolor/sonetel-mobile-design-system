@@ -32,6 +32,9 @@ const tokens = loadAndProcessTokens();
 generateIOSFiles(tokens);
 generateAndroidFiles(tokens);
 
+// Generate mobile component specifications
+generateMobileComponentSpecs();
+
 // Generate stats
 generateStats(tokens);
 
@@ -612,6 +615,30 @@ object SonetelColorScheme {
   fs.writeFileSync("./dist/android/SonetelColorScheme.kt", kotlin);
 }
 
+function generateMobileComponentSpecs() {
+  console.log("📱 Copying mobile component specifications...");
+
+  // Create mobile-components directory in dist
+  const mobileComponentsDir = "./dist/mobile-components";
+  if (!fs.existsSync(mobileComponentsDir)) {
+    fs.mkdirSync(mobileComponentsDir, { recursive: true });
+  }
+
+  // Copy component specifications
+  const sourceDir = "./mobile-components";
+  if (fs.existsSync(sourceDir)) {
+    const files = fs.readdirSync(sourceDir);
+    files.forEach((file) => {
+      const sourcePath = path.join(sourceDir, file);
+      const destPath = path.join(mobileComponentsDir, file);
+      fs.copyFileSync(sourcePath, destPath);
+      console.log(`   ✅ ${file}`);
+    });
+  }
+
+  console.log("✅ Mobile component specifications exported");
+}
+
 function generateStats(tokens) {
   const stats = {
     colors: tokens.lightColors.length,
@@ -627,6 +654,7 @@ function generateStats(tokens) {
           "DesignSystemTypography.swift",
           "DesignSystemSpacing.swift",
         ],
+        components: ["mobile-components/Button.md"],
       },
       android: {
         files: [
@@ -636,6 +664,7 @@ function generateStats(tokens) {
           "SonetelDesignTokens.kt",
           "SonetelColorScheme.kt",
         ],
+        components: ["mobile-components/Button.md"],
       },
     },
   };

@@ -1,14 +1,22 @@
 import "./global.css";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { Home, Palette, Download, Eye } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Home, Palette, Download, Eye, Layers, Moon, Sun } from "lucide-react";
 import Index from "./pages/Index";
 import Tokens from "./pages/Tokens";
+import Components from "./pages/Components";
 import Automation from "./pages/Automation";
 import NotFound from "./pages/NotFound";
 
 // Navigation Component
-function Navigation() {
+function Navigation({
+  darkMode,
+  toggleDarkMode,
+}: {
+  darkMode: boolean;
+  toggleDarkMode: () => void;
+}) {
   const location = useLocation();
 
   const isActive = (path: string) => {
@@ -52,6 +60,17 @@ function Navigation() {
               Tokens
             </a>
             <a
+              href="/components"
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive("/components")
+                  ? "bg-primary/10 text-primary"
+                  : "text-app-bar-foreground hover:bg-accent hover:text-accent-foreground"
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              Components
+            </a>
+            <a
               href="/automation"
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 isActive("/automation")
@@ -62,6 +81,21 @@ function Navigation() {
               <Download className="w-4 h-4" />
               Automation
             </a>
+
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={toggleDarkMode}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-app-bar-foreground hover:bg-accent hover:text-accent-foreground ml-2"
+              aria-label={
+                darkMode ? "Switch to light mode" : "Switch to dark mode"
+              }
+            >
+              {darkMode ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4" />
+              )}
+            </button>
           </div>
         </div>
       </div>
@@ -71,14 +105,39 @@ function Navigation() {
 
 // App Component
 function App() {
+  // Dark mode state management
+  const [darkMode, setDarkMode] = useState(() => {
+    // Check localStorage first, then system preference
+    const saved = localStorage.getItem("darkMode");
+    if (saved !== null) {
+      return JSON.parse(saved);
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  // Apply dark mode class to document and save to localStorage
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-background">
-        <Navigation />
+        <Navigation darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <main className="pb-safe-bottom">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/tokens" element={<Tokens />} />
+            <Route path="/components" element={<Components />} />
             <Route path="/automation" element={<Automation />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

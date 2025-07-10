@@ -12,6 +12,10 @@ import {
   handleSyncStatus as handleAutomationStatus,
 } from "./routes/automation";
 import { handleTokenStats, handleTokenList } from "./routes/tokens";
+import {
+  handleComponentsList,
+  handleComponentDownload,
+} from "./routes/components";
 
 export function createServer() {
   const app = express();
@@ -38,6 +42,10 @@ export function createServer() {
   // Token data routes
   app.get("/api/tokens/stats", handleTokenStats);
   app.get("/api/tokens/list", handleTokenList);
+
+  // Component specification routes
+  app.get("/api/components", handleComponentsList);
+  app.get("/api/components/:name/download", handleComponentDownload);
 
   // Token sync routes
   app.post("/api/sync/figma", handleFigmaSync);

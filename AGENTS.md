@@ -1,8 +1,10 @@
 # Sonetel Mobile Design System
 
-This is the **shared mobile design system** for Sonetel native iOS and Android apps.
+This is the **shared mobile design system** for Sonetel **native iOS and Android apps only**.
 
 **Token Studio Integration**: All design tokens are exported from Figma using Token Studio and transformed per platform using Style Dictionary.
+
+**Native Mobile Focus**: This system generates Swift files for iOS and Kotlin/XML resources for Android. It does not support web technologies (HTML/CSS/JavaScript).
 
 **Builder.io Integration**: This design system serves as the single source of truth for mobile design tokens that Builder.io's native mobile SDK should consume.
 

@@ -159,7 +159,12 @@
 }
 
 @layer components {
-  /* App-like button styles */
+  /* Design System Button Enhancements */
+  .touch-friendly {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* App-like button styles (legacy - replaced by new Button component) */
   .btn-primary {
     @apply bg-primary text-primary-foreground rounded-full px-6 py-3 font-semibold shadow-lg shadow-primary/25 active:scale-95 transition-all duration-200;
   }
@@ -184,5 +189,18 @@
 
   .bottom-nav-item:not(.active) {
     @apply text-bottom-nav-foreground;
+  }
+
+  /* Design System specific utilities */
+  .design-system-button-xl {
+    /* Matches Figma X-large button specs */
+    height: 56px;
+    min-width: 280px;
+    padding: 16px 20px;
+    border-radius: 36px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: -0.36px;
   }
 }

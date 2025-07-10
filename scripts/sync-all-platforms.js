@@ -77,13 +77,17 @@ async function main() {
     console.log("\n🤖 Syncing to Android project...");
     await syncToAndroid(useGit);
 
-    // Step 4: Push changes if requested
+    // Step 4: Copy mobile component specifications
+    console.log("\n📱 Copying mobile component specifications...");
+    copyMobileComponentSpecs();
+
+    // Step 5: Push changes if requested
     if (useGit && pushChanges) {
       console.log("\n⬆️  Pushing changes to remote repositories...");
       await pushToRemote();
     }
 
-    // Step 5: Generate report
+    // Step 6: Generate report
     generateReport();
 
     console.log("\n🎉 All platforms synced successfully!");
@@ -199,6 +203,50 @@ async function syncToAndroid(useGit) {
   }
 
   console.log(`✅ Android sync complete (${copiedFiles.length} files)`);
+}
+
+function copyMobileComponentSpecs() {
+  const sourceDir = "./dist/mobile-components";
+
+  if (!fs.existsSync(sourceDir)) {
+    console.log("⚠️  No mobile component specifications found");
+    return;
+  }
+
+  // Copy to iOS project documentation
+  const iosDocsPath = path.resolve(CONFIG.ios.projectPath, "Documentation");
+  if (fs.existsSync(path.resolve(CONFIG.ios.projectPath))) {
+    if (!fs.existsSync(iosDocsPath)) {
+      fs.mkdirSync(iosDocsPath, { recursive: true });
+    }
+
+    const files = fs.readdirSync(sourceDir);
+    files.forEach((file) => {
+      const sourcePath = path.join(sourceDir, file);
+      const destPath = path.join(iosDocsPath, `DesignSystem-${file}`);
+      fs.copyFileSync(sourcePath, destPath);
+      console.log(`   ✅ iOS: DesignSystem-${file}`);
+    });
+  }
+
+  // Copy to Android project documentation
+  const androidDocsPath = path.resolve(
+    CONFIG.android.projectPath,
+    "docs/design-system",
+  );
+  if (fs.existsSync(path.resolve(CONFIG.android.projectPath))) {
+    if (!fs.existsSync(androidDocsPath)) {
+      fs.mkdirSync(androidDocsPath, { recursive: true });
+    }
+
+    const files = fs.readdirSync(sourceDir);
+    files.forEach((file) => {
+      const sourcePath = path.join(sourceDir, file);
+      const destPath = path.join(androidDocsPath, file);
+      fs.copyFileSync(sourcePath, destPath);
+      console.log(`   ✅ Android: ${file}`);
+    });
+  }
 }
 
 async function handleGitOperations(projectPath, copiedFiles, platform) {

@@ -52,9 +52,9 @@ export default function Index() {
           Sonetel Mobile Design System
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Shared design tokens for Sonetel iOS and Android apps. Exported from
-          Figma using Token Studio and transformed per platform with Style
-          Dictionary.
+          Shared design tokens and component specifications for Sonetel native
+          iOS and Android apps. Exported from Figma using Token Studio and
+          transformed to Swift and Kotlin using Style Dictionary.
         </p>
       </div>
 
@@ -173,7 +173,7 @@ export default function Index() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-3 gap-6">
         <Link
           to="/tokens"
           className="group bg-card rounded-2xl p-6 shadow-sm border hover:shadow-md transition-all"
@@ -182,11 +182,28 @@ export default function Index() {
             <div>
               <h3 className="text-lg font-semibold mb-2">Browse Tokens</h3>
               <p className="text-muted-foreground">
-                View all design tokens organized by category
+                View all design tokens for native iOS and Android
               </p>
             </div>
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
               <Palette className="w-5 h-5 text-primary" />
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          to="/components"
+          className="group bg-card rounded-2xl p-6 shadow-sm border hover:shadow-md transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Mobile Components</h3>
+              <p className="text-muted-foreground">
+                Native iOS and Android component specifications
+              </p>
+            </div>
+            <div className="w-10 h-10 bg-success/10 rounded-xl flex items-center justify-center group-hover:bg-success/20 transition-colors">
+              <Type className="w-5 h-5 text-success" />
             </div>
           </div>
         </Link>
@@ -197,9 +214,11 @@ export default function Index() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold mb-2">Automation</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                Sync to Mobile Apps
+              </h3>
               <p className="text-muted-foreground">
-                Sync tokens to mobile projects and view status
+                Automatically sync tokens to iOS and Android projects
               </p>
             </div>
             <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center group-hover:bg-accent/20 transition-colors">
