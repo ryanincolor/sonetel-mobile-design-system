@@ -48,7 +48,7 @@ generateMobileComponentSpecs();
 // Generate stats
 generateStats(tokens);
 
-console.log("🎉 All platform tokens generated successfully!");
+console.log("��� All platform tokens generated successfully!");
 console.log(`📁 Output: ${outputDir}/`);
 
 // Show summary of generated files
@@ -713,9 +713,9 @@ object SonetelDesignTokens {
     val borderRadiusMedium = medium
     val borderRadiusLarge = large
 
-    // MARK: - Accent Blue Aliases (for legacy compatibility)
+        // MARK: - Accent Blue Aliases (for legacy compatibility)
     val accentsBluLight = accentsBlueLight
-    val accentsBlueDark = accentsBlueDark
+        val accentsBlueDark = accentsBlueLight  // Fallback to light version for dark theme
 }`;
 
   fs.writeFileSync("./build/android/SonetelDesignTokens.kt", kotlin);
@@ -737,7 +737,7 @@ import com.sonetel.designsystem.SonetelDesignTokens
 object SonetelColorScheme {
 
     val LightColorScheme = lightColorScheme(
-        primary = SonetelDesignTokens.accentsBluLight,
+                primary = SonetelDesignTokens.onSurfaceOnSurfacePrimaryLight,
         onPrimary = SonetelDesignTokens.solidZ0Light,
         surface = SonetelDesignTokens.solidZ0Light,
         onSurface = SonetelDesignTokens.onSurfaceOnSurfacePrimaryLight,
@@ -747,7 +747,7 @@ object SonetelColorScheme {
     )
 
     val DarkColorScheme = darkColorScheme(
-        primary = SonetelDesignTokens.accentsBluDark,
+                        primary = SonetelDesignTokens.onSurfaceOnSurfacePrimaryDark,
         onPrimary = SonetelDesignTokens.solidZ0Dark,
         surface = SonetelDesignTokens.solidZ0Dark,
         onSurface = SonetelDesignTokens.onSurfaceOnSurfacePrimaryDark,
@@ -1207,7 +1207,7 @@ fun SonetelTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = SonetelTypography,
+                typography = SonetelMaterial3Typography,
         shapes = SonetelShapes,
         content = content
     )

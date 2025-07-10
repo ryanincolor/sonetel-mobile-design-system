@@ -29,7 +29,7 @@ fun SonetelTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = SonetelTypography,
+                typography = SonetelMaterial3Typography,
         shapes = SonetelShapes,
         content = content
     )

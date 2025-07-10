@@ -13,7 +13,7 @@ import com.sonetel.designsystem.SonetelDesignTokens
 object SonetelColorScheme {
 
     val LightColorScheme = lightColorScheme(
-        primary = SonetelDesignTokens.accentsBluLight,
+                primary = SonetelDesignTokens.onSurfaceOnSurfacePrimaryLight,
         onPrimary = SonetelDesignTokens.solidZ0Light,
         surface = SonetelDesignTokens.solidZ0Light,
         onSurface = SonetelDesignTokens.onSurfaceOnSurfacePrimaryLight,
@@ -23,7 +23,7 @@ object SonetelColorScheme {
     )
 
     val DarkColorScheme = darkColorScheme(
-        primary = SonetelDesignTokens.accentsBluDark,
+                        primary = SonetelDesignTokens.onSurfaceOnSurfacePrimaryDark,
         onPrimary = SonetelDesignTokens.solidZ0Dark,
         surface = SonetelDesignTokens.solidZ0Dark,
         onSurface = SonetelDesignTokens.onSurfaceOnSurfacePrimaryDark,
