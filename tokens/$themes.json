@@ -4,10 +4,7 @@
     "name": "Mode 1",
     "group": "Core/Colors",
     "selectedTokenSets": {
-      "Core/Colors": "enabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
+      "Core/Colors": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -74,12 +71,7 @@
     "id": "core/archive/color-light",
     "name": "Light",
     "group": "Core/Archive/Color",
-    "selectedTokenSets": {
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
-    },
+    "selectedTokenSets": {},
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
       "Color.On-Surface.on-surface-primary": "b26f7b309540b7b35f87731955698032c1dfba01",
@@ -121,12 +113,7 @@
     "id": "core/archive/color-dark",
     "name": "Dark",
     "group": "Core/Archive/Color",
-    "selectedTokenSets": {
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
-    },
+    "selectedTokenSets": {},
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
       "Color.On-Surface.on-surface-primary": "b26f7b309540b7b35f87731955698032c1dfba01",
@@ -169,10 +156,7 @@
     "name": "Mode 1",
     "group": "Core/Spacings",
     "selectedTokenSets": {
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "enabled",
-      "Core/Icons": "disabled"
+      "Core/Spacings": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -198,10 +182,7 @@
     "name": "Value",
     "group": "Core/Typography",
     "selectedTokenSets": {
-      "Core/Colors": "disabled",
-      "Core/Typography": "enabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
+      "Core/Typography": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -238,9 +219,6 @@
     "name": "Mode 1",
     "group": "Core/Icons",
     "selectedTokenSets": {
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
       "Core/Icons": "enabled"
     },
     "$figmaStyleReferences": {},
@@ -259,11 +237,7 @@
     "name": "Value",
     "group": "MSys/Spacing",
     "selectedTokenSets": {
-      "Sys/Spacing": "enabled",
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
+      "Sys/Spacing": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -293,11 +267,7 @@
     "name": "Light",
     "group": "MSys/Color",
     "selectedTokenSets": {
-      "Sys/Color/Light": "enabled",
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
+      "Sys/Color/Light": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -306,7 +276,6 @@
       "On-Surface.on-surface-inverse": "e7ebce6bc703cc88a84a6659c7a499822411b311",
       "On-Surface.on-surface-secondary": "9978fa7b3915809a45d892be24ce25ca33e4fc81",
       "Solid.Z2": "0e914b66dfe8009c2498279603cf64e0ce1e3648",
-      "Interact.hover": "e8270f2e6490866ba4fe3d0ad914fe6f66d180d2",
       "On-Surface.on-surface-tertiary": "f3137aec9893775d08bb967902255d80c515a05f",
       "On-Surface.on-surface-primary": "47ad150c290ede4ef34893019d871cb6156e02ff",
       "Accents.purple": "0d3c3d0953198bb0042f3676653950ee3926853d",
@@ -339,11 +308,7 @@
     "name": "Dark",
     "group": "MSys/Color",
     "selectedTokenSets": {
-      "Sys/Color/Dark": "enabled",
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
+      "Sys/Color/Dark": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -352,7 +317,6 @@
       "On-Surface.on-surface-inverse": "e7ebce6bc703cc88a84a6659c7a499822411b311",
       "On-Surface.on-surface-secondary": "9978fa7b3915809a45d892be24ce25ca33e4fc81",
       "Solid.Z2": "0e914b66dfe8009c2498279603cf64e0ce1e3648",
-      "Interact.hover": "e8270f2e6490866ba4fe3d0ad914fe6f66d180d2",
       "On-Surface.on-surface-tertiary": "f3137aec9893775d08bb967902255d80c515a05f",
       "On-Surface.on-surface-primary": "47ad150c290ede4ef34893019d871cb6156e02ff",
       "Accents.purple": "0d3c3d0953198bb0042f3676653950ee3926853d",
@@ -385,11 +349,7 @@
     "name": "Mode 1",
     "group": "MSys/Typography",
     "selectedTokenSets": {
-      "Sys/Typography": "enabled",
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
+      "Sys/Typography": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -440,11 +400,7 @@
     "name": "Mode 1",
     "group": "MSys/Border Radius",
     "selectedTokenSets": {
-      "Sys/Border Radius": "enabled",
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
+      "Sys/Border Radius": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -459,12 +415,7 @@
     "id": "sys/spacing-value",
     "name": "Value",
     "group": "Sys/Spacing",
-    "selectedTokenSets": {
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
-    },
+    "selectedTokenSets": {},
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
       "spacing.2xs": "060e62726e160c182fc7feac17605eab81272486",
@@ -493,11 +444,7 @@
     "name": "Light",
     "group": "Sys/Color",
     "selectedTokenSets": {
-      "Sys/Color/Light": "enabled",
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
+      "Sys/Color/Light": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -506,7 +453,6 @@
       "On-Surface.on-surface-inverse": "e7ebce6bc703cc88a84a6659c7a499822411b311",
       "On-Surface.on-surface-secondary": "9978fa7b3915809a45d892be24ce25ca33e4fc81",
       "Solid.Z2": "0e914b66dfe8009c2498279603cf64e0ce1e3648",
-      "Interact.hover": "e8270f2e6490866ba4fe3d0ad914fe6f66d180d2",
       "On-Surface.on-surface-tertiary": "f3137aec9893775d08bb967902255d80c515a05f",
       "On-Surface.on-surface-primary": "47ad150c290ede4ef34893019d871cb6156e02ff",
       "Accents.purple": "0d3c3d0953198bb0042f3676653950ee3926853d",
@@ -539,11 +485,7 @@
     "name": "Dark",
     "group": "Sys/Color",
     "selectedTokenSets": {
-      "Sys/Color/Dark": "enabled",
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
+      "Sys/Color/Dark": "enabled"
     },
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
@@ -552,7 +494,6 @@
       "On-Surface.on-surface-inverse": "e7ebce6bc703cc88a84a6659c7a499822411b311",
       "On-Surface.on-surface-secondary": "9978fa7b3915809a45d892be24ce25ca33e4fc81",
       "Solid.Z2": "0e914b66dfe8009c2498279603cf64e0ce1e3648",
-      "Interact.hover": "e8270f2e6490866ba4fe3d0ad914fe6f66d180d2",
       "On-Surface.on-surface-tertiary": "f3137aec9893775d08bb967902255d80c515a05f",
       "On-Surface.on-surface-primary": "47ad150c290ede4ef34893019d871cb6156e02ff",
       "Accents.purple": "0d3c3d0953198bb0042f3676653950ee3926853d",
@@ -584,12 +525,7 @@
     "id": "sys/typography-mode 1",
     "name": "Mode 1",
     "group": "Sys/Typography",
-    "selectedTokenSets": {
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
-    },
+    "selectedTokenSets": {},
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
       "font-size.headline.h1": "51c75c4d9776323f1d231e97c7fc004a47716c43",
@@ -638,12 +574,7 @@
     "id": "sys/border radius-mode 1",
     "name": "Mode 1",
     "group": "Sys/Border Radius",
-    "selectedTokenSets": {
-      "Core/Colors": "disabled",
-      "Core/Typography": "disabled",
-      "Core/Spacings": "disabled",
-      "Core/Icons": "disabled"
-    },
+    "selectedTokenSets": {},
     "$figmaStyleReferences": {},
     "$figmaVariableReferences": {
       "large": "8060f4af7edfbfe19f5adf9b276e671d604cf512",

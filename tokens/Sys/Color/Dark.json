@@ -51,12 +51,6 @@
       "type": "color"
     }
   },
-  "Interact": {
-    "hover": {
-      "value": "{Archive.Overlay.Dark.20%}",
-      "type": "color"
-    }
-  },
   "Accents": {
     "purple": {
       "value": "#aaa1f1",
