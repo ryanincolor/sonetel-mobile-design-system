@@ -2,9 +2,19 @@ import "./global.css";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Home, Palette, Download, Eye, Layers, Moon, Sun } from "lucide-react";
+import {
+  Home,
+  Palette,
+  Download,
+  Eye,
+  Layers,
+  Type,
+  Moon,
+  Sun,
+} from "lucide-react";
 import Index from "./pages/Index";
 import Tokens from "./pages/Tokens";
+import Styles from "./pages/Styles";
 import Components from "./pages/Components";
 import Automation from "./pages/Automation";
 import NotFound from "./pages/NotFound";
@@ -58,6 +68,17 @@ function Navigation({
             >
               <Eye className="w-4 h-4" />
               Tokens
+            </a>
+            <a
+              href="/styles"
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive("/styles")
+                  ? "bg-primary/10 text-primary"
+                  : "text-app-bar-foreground hover:bg-accent hover:text-accent-foreground"
+              }`}
+            >
+              <Type className="w-4 h-4" />
+              Styles
             </a>
             <a
               href="/components"
@@ -137,6 +158,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/tokens" element={<Tokens />} />
+            <Route path="/styles" element={<Styles />} />
             <Route path="/components" element={<Components />} />
             <Route path="/automation" element={<Automation />} />
             <Route path="*" element={<NotFound />} />

@@ -111,35 +111,35 @@ enum class SonetelButtonSize(
         height = SonetelDesignTokens.spacing4xl,
         horizontalPadding = SonetelDesignTokens.spacingM,
         verticalPadding = SonetelDesignTokens.spacingXs,
-        textStyle = SonetelTypography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
+        textStyle = SonetelTypography.Label.small.copy(fontWeight = FontWeight.SemiBold),
         minWidth = null
     ),
     Small(
         height = SonetelDesignTokens.spacing10xl,
         horizontalPadding = SonetelDesignTokens.spacingL,
         verticalPadding = SonetelDesignTokens.spacingS,
-        textStyle = SonetelTypography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+        textStyle = SonetelTypography.Label.medium.copy(fontWeight = FontWeight.SemiBold),
         minWidth = null
     ),
     Medium(
         height = SonetelDesignTokens.spacing4xl + 4.dp,
         horizontalPadding = SonetelDesignTokens.spacingL,
         verticalPadding = SonetelDesignTokens.spacingS,
-        textStyle = SonetelTypography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+        textStyle = SonetelTypography.Label.medium.copy(fontWeight = FontWeight.SemiBold),
         minWidth = SonetelDesignTokens.spacing9xl
     ),
     Large(
         height = SonetelDesignTokens.spacing6xl,
         horizontalPadding = SonetelDesignTokens.spacingXl,
         verticalPadding = SonetelDesignTokens.spacingL,
-        textStyle = SonetelTypography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+        textStyle = SonetelTypography.Label.large.copy(fontWeight = FontWeight.SemiBold),
         minWidth = SonetelDesignTokens.spacing10xl
     ),
     ExtraLarge(
         height = SonetelDesignTokens.spacing7xl,
         horizontalPadding = SonetelDesignTokens.spacingXl,
         verticalPadding = SonetelDesignTokens.spacingL,
-        textStyle = SonetelTypography.labelLarge.copy(
+        textStyle = SonetelTypography.Label.large.copy(
             fontWeight = FontWeight.SemiBold,
             letterSpacing = SonetelDesignTokens.letterSpacingTight
         ),
