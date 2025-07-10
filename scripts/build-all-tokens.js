@@ -11,13 +11,22 @@ import { execSync } from "child_process";
 
 console.log("🚀 Starting unified token generation for iOS and Android...");
 
-// Clean output directories
+// Clean any legacy build locations first
+cleanLegacyFiles();
+
+// Clean output directories - remove ALL old files
 const outputDir = "./build";
 if (fs.existsSync(outputDir)) {
-  fs.rmSync(outputDir, { recursive: true });
-  console.log("🧹 Cleaned existing output");
+  console.log("🧹 Removing old build files...");
+  const files = fs.readdirSync(outputDir, { recursive: true });
+  console.log(`   Found ${files.length} existing files to remove`);
+  fs.rmSync(outputDir, { recursive: true, force: true });
+  console.log("✅ Cleaned existing output completely");
+} else {
+  console.log("📁 No existing build directory found");
 }
 
+// Create fresh directory structure
 fs.mkdirSync(outputDir, { recursive: true });
 fs.mkdirSync(`${outputDir}/ios`, { recursive: true });
 fs.mkdirSync(`${outputDir}/android/values`, { recursive: true });
@@ -40,6 +49,87 @@ generateStats(tokens);
 
 console.log("🎉 All platform tokens generated successfully!");
 console.log(`📁 Output: ${outputDir}/`);
+
+// Show summary of generated files
+showGeneratedFilesSummary(outputDir);
+
+function cleanLegacyFiles() {
+  const legacyPaths = [
+    "./dist",
+    "./design-system",
+    "./mobile-components/dist", // In case any nested dist folders exist
+  ];
+
+  let cleanedAny = false;
+
+  legacyPaths.forEach((path) => {
+    if (fs.existsSync(path)) {
+      console.log(`🧹 Removing legacy files from ${path}...`);
+      try {
+        const files = fs.readdirSync(path, { recursive: true });
+        console.log(`   Found ${files.length} legacy files to remove`);
+        fs.rmSync(path, { recursive: true, force: true });
+        console.log(`✅ Cleaned legacy path: ${path}`);
+        cleanedAny = true;
+      } catch (error) {
+        console.log(`   ⚠️  Could not clean ${path}: ${error.message}`);
+      }
+    }
+  });
+
+  if (!cleanedAny) {
+    console.log("✨ No legacy files found - build directory is clean");
+  }
+}
+
+function showGeneratedFilesSummary(outputDir) {
+  try {
+    const allFiles = [];
+
+    function collectFiles(dir, prefix = "") {
+      const items = fs.readdirSync(dir);
+      items.forEach((item) => {
+        const fullPath = path.join(dir, item);
+        const stat = fs.statSync(fullPath);
+        if (stat.isDirectory()) {
+          collectFiles(fullPath, prefix + item + "/");
+        } else {
+          allFiles.push(prefix + item);
+        }
+      });
+    }
+
+    collectFiles(outputDir);
+
+    console.log(`\n📊 Generated Files Summary:`);
+    console.log(`   Total files: ${allFiles.length}`);
+
+    const byExtension = {};
+    allFiles.forEach((file) => {
+      const ext = path.extname(file) || "no extension";
+      byExtension[ext] = (byExtension[ext] || 0) + 1;
+    });
+
+    Object.entries(byExtension).forEach(([ext, count]) => {
+      console.log(`   ${ext}: ${count} files`);
+    });
+
+    console.log(`\n📱 Platform Breakdown:`);
+    const iosFiles = allFiles.filter((f) => f.startsWith("ios/")).length;
+    const androidFiles = allFiles.filter((f) =>
+      f.startsWith("android/"),
+    ).length;
+    const componentFiles = allFiles.filter((f) =>
+      f.startsWith("mobile-components/"),
+    ).length;
+
+    console.log(`   iOS: ${iosFiles} files`);
+    console.log(`   Android: ${androidFiles} files`);
+    console.log(`   Components: ${componentFiles} files`);
+  } catch (error) {
+    console.log("   ⚠️ Could not generate summary:", error.message);
+  }
+}
 
 function loadAndProcessTokens() {
   console.log("📖 Loading and processing design tokens...");
@@ -410,8 +500,11 @@ function generateAndroidFiles(tokens) {
   // Generate Compose object
   generateAndroidCompose(tokens);
 
-  // Generate Material 3 theme
+  // Generate Material 3 theme, typography, and shapes
   generateMaterial3Theme(tokens);
+  generateMaterial3Typography(tokens);
+  generateMaterial3Shapes(tokens);
+  generateMaterial3ThemeIntegration();
 
   console.log("✅ Android files generated");
 }
@@ -503,6 +596,7 @@ function generateAndroidCompose(tokens) {
 package com.sonetel.designsystem
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -541,6 +635,12 @@ object SonetelDesignTokens {
   });
 
   kotlin += `
+
+        // MARK: - Font Weights
+    val fontWeightRegular = FontWeight.Normal
+    val fontWeightMedium = FontWeight.Medium
+    val fontWeightBold = FontWeight.SemiBold
+    val fontWeightXBold = FontWeight.Bold
 
     // MARK: - Spacing
 `;
@@ -613,6 +713,227 @@ object SonetelColorScheme {
 }`;
 
   fs.writeFileSync("./build/android/SonetelColorScheme.kt", kotlin);
+}
+
+function generateMaterial3Typography(tokens) {
+  let kotlin = `// Sonetel Material 3 Typography
+// Auto-generated on ${new Date().toLocaleDateString()} - Do not edit manually
+
+package com.sonetel.ui.theme
+
+import androidx.compose.material3.Typography
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.sonetel.designsystem.SonetelDesignTokens
+
+/**
+ * Material 3 Typography using Sonetel design tokens
+ * Provides semantic text styles for consistent typography across the app
+ */
+val SonetelTypography = Typography(
+    // Display styles
+    displayLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = SonetelDesignTokens.fontSize3xl,
+        lineHeight = (SonetelDesignTokens.fontSize3xl.value * 1.12f).sp,
+        letterSpacing = (-0.25).sp
+    ),
+    displayMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = SonetelDesignTokens.fontSize2xl,
+        lineHeight = (SonetelDesignTokens.fontSize2xl.value * 1.16f).sp,
+        letterSpacing = 0.sp
+    ),
+    displaySmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = SonetelDesignTokens.fontSizeXl,
+        lineHeight = (SonetelDesignTokens.fontSizeXl.value * 1.22f).sp,
+        letterSpacing = 0.sp
+    ),
+
+    // Headline styles
+    headlineLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = SonetelDesignTokens.fontSizeLg,
+        lineHeight = (SonetelDesignTokens.fontSizeLg.value * 1.25f).sp,
+        letterSpacing = 0.sp
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = SonetelDesignTokens.fontSizeMd,
+        lineHeight = (SonetelDesignTokens.fontSizeMd.value * 1.25f).sp,
+        letterSpacing = 0.sp
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = SonetelDesignTokens.fontSizeSm,
+        lineHeight = (SonetelDesignTokens.fontSizeSm.value * 1.33f).sp,
+        letterSpacing = 0.sp
+    ),
+
+    // Title styles
+    titleLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = SonetelDesignTokens.fontSizeLg,
+        lineHeight = (SonetelDesignTokens.fontSizeLg.value * 1.28f).sp,
+        letterSpacing = 0.sp
+    ),
+    titleMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = SonetelDesignTokens.fontSizeMd,
+        lineHeight = (SonetelDesignTokens.fontSizeMd.value * 1.5f).sp,
+        letterSpacing = 0.15.sp
+    ),
+    titleSmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = SonetelDesignTokens.fontSizeSm,
+        lineHeight = (SonetelDesignTokens.fontSizeSm.value * 1.43f).sp,
+        letterSpacing = 0.1.sp
+    ),
+
+    // Body styles
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = SonetelDesignTokens.fontSizeMd,
+        lineHeight = (SonetelDesignTokens.fontSizeMd.value * 1.5f).sp,
+        letterSpacing = 0.5.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = SonetelDesignTokens.fontSizeSm,
+        lineHeight = (SonetelDesignTokens.fontSizeSm.value * 1.43f).sp,
+        letterSpacing = 0.25.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = SonetelDesignTokens.fontSizeXs,
+        lineHeight = (SonetelDesignTokens.fontSizeXs.value * 1.33f).sp,
+        letterSpacing = 0.4.sp
+    ),
+
+    // Label styles
+    labelLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = SonetelDesignTokens.fontSizeSm,
+        lineHeight = (SonetelDesignTokens.fontSizeSm.value * 1.43f).sp,
+        letterSpacing = 0.1.sp
+    ),
+    labelMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = SonetelDesignTokens.fontSizeXs,
+        lineHeight = (SonetelDesignTokens.fontSizeXs.value * 1.33f).sp,
+        letterSpacing = 0.5.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = SonetelDesignTokens.fontSizeXxs,
+        lineHeight = (SonetelDesignTokens.fontSizeXxs.value * 1.45f).sp,
+        letterSpacing = 0.5.sp
+    )
+)
+`;
+
+  fs.writeFileSync("./build/android/SonetelTypography.kt", kotlin);
+}
+
+function generateMaterial3Shapes(tokens) {
+  let kotlin = `// Sonetel Material 3 Shapes
+// Auto-generated on ${new Date().toLocaleDateString()} - Do not edit manually
+
+package com.sonetel.ui.theme
+
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Shapes
+import androidx.compose.ui.unit.dp
+import com.sonetel.designsystem.SonetelDesignTokens
+
+/**
+ * Material 3 Shapes using Sonetel design tokens
+ * Provides consistent corner shapes across the app
+ */
+val SonetelShapes = Shapes(
+    extraSmall = RoundedCornerShape(SonetelDesignTokens.borderRadiusSmall),
+    small = RoundedCornerShape(SonetelDesignTokens.borderRadiusSmall),
+    medium = RoundedCornerShape(SonetelDesignTokens.borderRadiusMedium),
+    large = RoundedCornerShape(SonetelDesignTokens.borderRadiusLarge),
+    extraLarge = RoundedCornerShape(SonetelDesignTokens.borderRadiusLarge)
+)
+`;
+
+  fs.writeFileSync("./build/android/SonetelShapes.kt", kotlin);
+}
+
+function generateMaterial3ThemeIntegration() {
+  let kotlin = `// Sonetel Material 3 Theme Integration
+// Auto-generated on ${new Date().toLocaleDateString()} - Do not edit manually
+
+package com.sonetel.ui.theme
+
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+
+/**
+ * Complete Sonetel Material 3 theme
+ * Use this composable to wrap your app content with consistent theming
+ *
+ * Usage:
+ * SonetelTheme {
+ *     // Your app content here
+ * }
+ */
+@Composable
+fun SonetelTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val colorScheme = if (darkTheme) {
+        SonetelColorScheme.DarkColorScheme
+    } else {
+        SonetelColorScheme.LightColorScheme
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = SonetelTypography,
+        shapes = SonetelShapes,
+        content = content
+    )
+}
+
+/**
+ * Use this for components that need to access design tokens directly
+ * while still being wrapped in Material 3 theme
+ */
+@Composable
+fun SonetelThemeWithTokens(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    SonetelTheme(darkTheme = darkTheme) {
+        content()
+    }
+}
+`;
+
+  fs.writeFileSync("./build/android/SonetelTheme.kt", kotlin);
 }
 
 function generateMobileComponentSpecs() {

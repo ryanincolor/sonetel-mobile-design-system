@@ -374,11 +374,16 @@ async function generateAndroidTokens() {
   // Clean and create output directory
   const outputDir = "./build/android";
   if (fs.existsSync(outputDir)) {
-    fs.rmSync(outputDir, { recursive: true });
-    console.log("🧹 Cleaned existing Android output");
+    console.log("🧹 Removing old Android build files...");
+    const files = fs.readdirSync(outputDir, { recursive: true });
+    console.log(`   Found ${files.length} existing files to remove`);
+    fs.rmSync(outputDir, { recursive: true, force: true });
+    console.log("✅ Cleaned existing Android output");
+  } else {
+    console.log("📁 No existing Android build directory found");
   }
   fs.mkdirSync(outputDir, { recursive: true });
-  console.log("📁 Created fresh dist/android directory");
+  console.log("📁 Created fresh build/android directory");
 
   try {
     // Load tokens using iOS logic

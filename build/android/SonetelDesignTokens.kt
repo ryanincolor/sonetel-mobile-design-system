@@ -4,6 +4,7 @@
 package com.sonetel.designsystem
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -130,6 +131,12 @@ object SonetelDesignTokens {
     val transparentT6Dark = Color(0xFFffffffb0)    
     /** Transparent.T7 */
     val transparentT7Dark = Color(0xFFffffff)
+
+        // MARK: - Font Weights
+    val fontWeightRegular = FontWeight.Normal
+    val fontWeightMedium = FontWeight.Medium
+    val fontWeightBold = FontWeight.SemiBold
+    val fontWeightXBold = FontWeight.Bold
 
     // MARK: - Spacing
     
