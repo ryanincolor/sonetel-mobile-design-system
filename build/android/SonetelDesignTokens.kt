@@ -175,6 +175,16 @@ object SonetelDesignTokens {
     /** spacing.12xl */
     val spacing12xl = 128.dp
 
+        // MARK: - Font Sizes
+    val fontSizeXxs = 11.sp
+    val fontSizeXs = 12.sp
+    val fontSizeSm = 14.sp
+    val fontSizeMd = 16.sp
+    val fontSizeLg = 20.sp
+    val fontSizeXl = 24.sp
+    val fontSize2xl = 28.sp
+    val fontSize3xl = 34.sp
+
     // MARK: - Border Radius
     
     /** large */

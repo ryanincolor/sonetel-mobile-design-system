@@ -39,6 +39,7 @@ const tokens = loadAndProcessTokens();
 
 // Generate platform-specific files
 generateIOSFiles(tokens);
+generateIOSComponents();
 generateAndroidFiles(tokens);
 
 // Generate mobile component specifications
@@ -506,6 +507,12 @@ function generateAndroidFiles(tokens) {
   generateMaterial3Shapes(tokens);
   generateMaterial3ThemeIntegration();
 
+  // Generate actual component files
+  generateAndroidComponents();
+
+  // Generate component manifest for version tracking
+  generateComponentManifest();
+
   console.log("✅ Android files generated");
 }
 
@@ -656,6 +663,16 @@ object SonetelDesignTokens {
   });
 
   kotlin += `
+
+        // MARK: - Font Sizes
+    val fontSizeXxs = 11.sp
+    val fontSizeXs = 12.sp
+    val fontSizeSm = 14.sp
+    val fontSizeMd = 16.sp
+    val fontSizeLg = 20.sp
+    val fontSizeXl = 24.sp
+    val fontSize2xl = 28.sp
+    val fontSize3xl = 34.sp
 
     // MARK: - Border Radius
 `;
@@ -934,6 +951,533 @@ fun SonetelThemeWithTokens(
 `;
 
   fs.writeFileSync("./build/android/SonetelTheme.kt", kotlin);
+}
+
+function generateAndroidComponents() {
+  console.log("📱 Generating Android Jetpack Compose components...");
+
+  // Create components directory
+  const componentsDir = "./build/android/components";
+  if (!fs.existsSync(componentsDir)) {
+    fs.mkdirSync(componentsDir, { recursive: true });
+  }
+
+  // Generate Button component
+  generateAndroidButton();
+
+  console.log("✅ Android components generated");
+}
+
+function generateAndroidButton() {
+  const kotlin = `// Sonetel Button Component - Jetpack Compose
+// Auto-generated on ${new Date().toLocaleDateString()} - Do not edit manually
+
+package com.sonetel.designsystem.components
+
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.sonetel.designsystem.SonetelDesignTokens
+
+/**
+ * Sonetel Button Component
+ *
+ * A Material 3 button that follows Sonetel design system specifications.
+ * Supports multiple sizes, variants, and states with consistent styling.
+ *
+ * @param text The button label text
+ * @param onClick Called when the button is clicked
+ * @param modifier Modifier to be applied to the button
+ * @param size The size variant of the button
+ * @param variant The style variant of the button
+ * @param isLoading Whether the button is in loading state
+ * @param enabled Whether the button is enabled
+ * @param interactionSource Optional interaction source for handling user interactions
+ */
+@Composable
+fun SonetelButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    size: SonetelButtonSize = SonetelButtonSize.Medium,
+    variant: SonetelButtonVariant = SonetelButtonVariant.Primary,
+    isLoading: Boolean = false,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+) {
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed && enabled && !isLoading) 0.98f else 1f,
+        label = "button_scale"
+    )
+
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .scale(scale)
+            .height(size.height)
+            .let { mod ->
+                size.minWidth?.let { minWidth ->
+                    mod.widthIn(min = minWidth)
+                } ?: mod
+            },
+        enabled = enabled && !isLoading,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = variant.backgroundColor,
+            contentColor = variant.textColor,
+            disabledContainerColor = variant.backgroundColor.copy(alpha = 0.5f),
+            disabledContentColor = variant.textColor.copy(alpha = 0.5f)
+        ),
+        border = variant.borderColor?.let { BorderStroke(2.dp, it) },
+        shape = RoundedCornerShape(size.height / 2),
+        contentPadding = PaddingValues(
+            horizontal = size.horizontalPadding,
+            vertical = size.verticalPadding
+        ),
+        interactionSource = interactionSource
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(16.dp),
+                color = variant.textColor,
+                strokeWidth = 2.dp
+            )
+        } else {
+            Text(
+                text = text,
+                fontSize = size.fontSize,
+                fontWeight = SonetelDesignTokens.fontWeightBold,
+                letterSpacing = if (size == SonetelButtonSize.ExtraLarge) (-0.36).sp else 0.sp
+            )
+        }
+    }
+}
+
+/**
+ * Button size variants with design token values
+ */
+enum class SonetelButtonSize(
+    val height: Dp,
+    val horizontalPadding: Dp,
+    val verticalPadding: Dp,
+    val fontSize: TextUnit,
+    val minWidth: Dp?
+) {
+            ExtraSmall(SonetelDesignTokens.spacing4xl, SonetelDesignTokens.spacingM, SonetelDesignTokens.spacingXs, SonetelDesignTokens.fontSizeXs, null),
+    Small(SonetelDesignTokens.spacing10xl, SonetelDesignTokens.spacingL, SonetelDesignTokens.spacingS, SonetelDesignTokens.fontSizeSm, null),
+    Medium(SonetelDesignTokens.spacing4xl + 4.dp, SonetelDesignTokens.spacingL, SonetelDesignTokens.spacingS, SonetelDesignTokens.fontSizeSm, SonetelDesignTokens.spacing9xl),
+    Large(SonetelDesignTokens.spacing6xl, SonetelDesignTokens.spacingXl, SonetelDesignTokens.spacingL, SonetelDesignTokens.fontSizeLg, SonetelDesignTokens.spacing10xl),
+    ExtraLarge(SonetelDesignTokens.spacing7xl, SonetelDesignTokens.spacingXl, SonetelDesignTokens.spacingL, SonetelDesignTokens.fontSizeLg, SonetelDesignTokens.spacing12xl)
+}
+
+/**
+ * Button style variants using design tokens
+ */
+enum class SonetelButtonVariant(
+    val backgroundColor: Color,
+    val textColor: Color,
+    val borderColor: Color?
+) {
+    Primary(SonetelDesignTokens.solidZ7Light, SonetelDesignTokens.solidZ0Light, null),
+    Secondary(SonetelDesignTokens.solidZ1Light, SonetelDesignTokens.solidZ7Light, null),
+    Outline(Color.Transparent, SonetelDesignTokens.solidZ7Light, SonetelDesignTokens.solidZ7Light),
+    Ghost(Color.Transparent, SonetelDesignTokens.solidZ7Light, null),
+    Destructive(SonetelDesignTokens.alertCriticalLight, SonetelDesignTokens.solidZ0Light, null),
+    Success(SonetelDesignTokens.accentsGreenLight, SonetelDesignTokens.solidZ0Light, null)
+}
+
+/**
+ * Preview composables for development and testing
+ */
+@Composable
+internal fun SonetelButtonPreview() {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // Size variants
+        SonetelButtonSize.values().forEach { size ->
+            SonetelButton(
+                text = size.name,
+                onClick = { },
+                size = size
+            )
+        }
+
+        // Style variants
+        SonetelButtonVariant.values().forEach { variant ->
+            SonetelButton(
+                text = variant.name,
+                onClick = { },
+                variant = variant
+            )
+        }
+    }
+}
+`;
+
+  fs.writeFileSync("./build/android/components/SonetelButton.kt", kotlin);
+}
+
+function generateIOSComponents() {
+  console.log("📱 Generating iOS SwiftUI components...");
+
+  // Create components directory
+  const componentsDir = "./build/ios/components";
+  if (!fs.existsSync(componentsDir)) {
+    fs.mkdirSync(componentsDir, { recursive: true });
+  }
+
+  // Generate Button component
+  generateIOSButton();
+
+  console.log("✅ iOS components generated");
+}
+
+function generateIOSButton() {
+  const swift = `// Sonetel Button Component - SwiftUI
+// Auto-generated on ${new Date().toLocaleDateString()} - Do not edit manually
+
+import SwiftUI
+
+/**
+ * Sonetel Button Component
+ *
+ * A SwiftUI button that follows Sonetel design system specifications.
+ * Supports multiple sizes, variants, and states with consistent styling.
+ */
+public struct SonetelButton: View {
+    let title: String
+    let action: () -> Void
+
+    var size: SonetelButtonSize = .medium
+    var variant: SonetelButtonVariant = .primary
+    var isLoading: Bool = false
+    var isDisabled: Bool = false
+
+    @State private var isPressed = false
+
+    public init(
+        title: String,
+        action: @escaping () -> Void,
+        size: SonetelButtonSize = .medium,
+        variant: SonetelButtonVariant = .primary,
+        isLoading: Bool = false,
+        isDisabled: Bool = false
+    ) {
+        self.title = title
+        self.action = action
+        self.size = size
+        self.variant = variant
+        self.isLoading = isLoading
+        self.isDisabled = isDisabled
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            HStack {
+                if isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color(variant.textColor)))
+                        .scaleEffect(0.8)
+                } else {
+                    Text(title)
+                                                .font(.system(size: size.fontSize, weight: .semibold))
+                        .kerning(size == .extraLarge ? -0.36 : 0)
+                        .foregroundColor(Color(variant.textColor))
+                }
+            }
+            .frame(minWidth: size.minWidth, minHeight: size.height)
+            .frame(height: size.height)
+            .padding(.horizontal, size.horizontalPadding)
+            .padding(.vertical, size.verticalPadding)
+            .background(Color(variant.backgroundColor))
+            .overlay(
+                RoundedRectangle(cornerRadius: size.height / 2)
+                    .stroke(
+                        Color(variant.borderColor ?? .clear),
+                        lineWidth: variant.borderColor != nil ? 2 : 0
+                    )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: size.height / 2))
+        }
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .animation(.easeOut(duration: 0.1), value: isPressed)
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+            isPressed = pressing
+        }, perform: {})
+        .disabled(isDisabled || isLoading)
+        .opacity(isDisabled ? 0.5 : 1.0)
+    }
+}
+
+/**
+ * Button size variants with design token values
+ */
+public enum SonetelButtonSize {
+    case extraSmall, small, medium, large, extraLarge
+
+        var height: CGFloat {
+        switch self {
+        case .extraSmall: return DesignSystemSpacing.spacing4xl
+        case .small: return DesignSystemSpacing.spacing10xl
+        case .medium: return DesignSystemSpacing.spacing4xl + 4
+        case .large: return DesignSystemSpacing.spacing6xl
+        case .extraLarge: return DesignSystemSpacing.spacing7xl
+        }
+    }
+
+        var fontSize: CGFloat {
+        switch self {
+        case .extraSmall: return DesignSystemTypography.fontSizeLabelSmall
+        case .small: return DesignSystemTypography.fontSizeLabelMedium
+        case .medium: return DesignSystemTypography.fontSizeLabelMedium
+        case .large: return DesignSystemTypography.fontSizeLabelLarge
+        case .extraLarge: return DesignSystemTypography.fontSizeLabelXLarge
+        }
+    }
+
+        var minWidth: CGFloat? {
+        switch self {
+        case .medium: return DesignSystemSpacing.spacing9xl
+        case .large: return DesignSystemSpacing.spacing10xl
+        case .extraLarge: return DesignSystemSpacing.spacing12xl
+        default: return nil
+        }
+    }
+
+        var horizontalPadding: CGFloat {
+        switch self {
+        case .extraSmall: return DesignSystemSpacing.spacingM
+        case .small: return DesignSystemSpacing.spacingL
+        case .medium: return DesignSystemSpacing.spacingL
+        case .large: return DesignSystemSpacing.spacingXl
+        case .extraLarge: return DesignSystemSpacing.spacingXl
+        }
+    }
+
+    var verticalPadding: CGFloat {
+        switch self {
+        case .extraSmall: return DesignSystemSpacing.spacingXs
+        case .small: return DesignSystemSpacing.spacingS
+        case .medium: return DesignSystemSpacing.spacingS
+        case .large: return DesignSystemSpacing.spacingL
+        case .extraLarge: return DesignSystemSpacing.spacingL
+        }
+    }
+}
+
+/**
+ * Button style variants using design tokens
+ */
+public enum SonetelButtonVariant {
+    case primary, secondary, outline, ghost, destructive, success
+
+    var backgroundColor: UIColor {
+        switch self {
+        case .primary: return .solidZ7
+        case .secondary: return .solidZ1
+        case .outline: return .clear
+        case .ghost: return .clear
+        case .destructive: return .alertCritical
+        case .success: return .accentsGreen
+        }
+    }
+
+    var textColor: UIColor {
+        switch self {
+        case .primary: return .solidZ0
+        case .secondary: return .solidZ7
+        case .outline: return .solidZ7
+        case .ghost: return .solidZ7
+        case .destructive: return .solidZ0
+        case .success: return .solidZ0
+        }
+    }
+
+    var borderColor: UIColor? {
+        switch self {
+        case .outline: return .solidZ7
+        default: return nil
+        }
+    }
+}
+
+/**
+ * Preview for SwiftUI previews and development
+ */
+struct SonetelButton_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack(spacing: 16) {
+            // Size variants
+            ForEach([SonetelButtonSize.extraSmall, .small, .medium, .large, .extraLarge], id: \\.self) { size in
+                SonetelButton(
+                    title: "\\(size)",
+                    action: { },
+                    size: size
+                )
+            }
+
+            // Style variants
+            ForEach([SonetelButtonVariant.primary, .secondary, .outline, .ghost, .destructive, .success], id: \\.self) { variant in
+                SonetelButton(
+                    title: "\\(variant)",
+                    action: { },
+                    variant: variant
+                )
+            }
+        }
+        .padding()
+    }
+}
+`;
+
+  fs.writeFileSync("./build/ios/components/SonetelButton.swift", swift);
+}
+
+function generateComponentManifest() {
+  const manifest = {
+    version: "1.0.0",
+    generatedAt: new Date().toISOString(),
+    components: {
+      button: {
+        version: "1.2.0", // Updated with Large button changes
+        lastModified: new Date().toISOString(),
+        files: {
+          android: "components/SonetelButton.kt",
+          ios: "components/SonetelButton.swift",
+          documentation: "mobile-components/Button.md",
+        },
+        changes: [
+          {
+            version: "1.2.0",
+            date: new Date().toISOString(),
+            description:
+              "Updated Large button: height 48px, min-width 80px, padding 20x16px to match Figma",
+            breaking: false,
+          },
+          {
+            version: "1.1.0",
+            date: "2025-01-07",
+            description:
+              "Added design token integration for padding, font-size, and font-weight",
+            breaking: false,
+          },
+          {
+            version: "1.0.0",
+            date: "2025-01-07",
+            description:
+              "Initial Button component with all size and style variants",
+            breaking: false,
+          },
+        ],
+      },
+    },
+    designTokens: {
+      version: "1.0.0",
+      files: {
+        android: [
+          "SonetelDesignTokens.kt",
+          "SonetelColorScheme.kt",
+          "SonetelTypography.kt",
+          "SonetelShapes.kt",
+          "SonetelTheme.kt",
+        ],
+        ios: [
+          "DesignSystemColors.swift",
+          "DesignSystemTypography.swift",
+          "DesignSystemSpacing.swift",
+        ],
+      },
+    },
+    integration: {
+      android: {
+        minSdkVersion: 21,
+        compileNeed:
+          "androidx.compose.ui:ui, androidx.compose.material3:material3",
+        importPath: "com.sonetel.designsystem.components.SonetelButton",
+      },
+      ios: {
+        minIOSVersion: "14.0",
+        framework: "SwiftUI",
+        importPath: "import SonetelDesignSystem",
+      },
+    },
+  };
+
+  fs.writeFileSync(
+    "./build/components.json",
+    JSON.stringify(manifest, null, 2),
+  );
+
+  // Also generate a simple README for integration
+  const readme = `# Sonetel Design System Components
+
+## Installation
+
+### Android (Jetpack Compose)
+\`\`\`kotlin
+// Add to your project and import:
+import com.sonetel.designsystem.components.SonetelButton
+import com.sonetel.designsystem.SonetelDesignTokens
+
+// Usage:
+SonetelButton(
+    text = "Click me",
+    onClick = { /* handle click */ },
+    size = SonetelButtonSize.Large,
+    variant = SonetelButtonVariant.Primary
+)
+\`\`\`
+
+### iOS (SwiftUI)
+\`\`\`swift
+// Import and use:
+import SonetelDesignSystem
+
+// Usage:
+SonetelButton(
+    title: "Click me",
+    action: { /* handle tap */ },
+    size: .large,
+    variant: .primary
+)
+\`\`\`
+
+## Components
+
+### Button v${manifest.components.button.version}
+- **Android**: ${manifest.components.button.files.android}
+- **iOS**: ${manifest.components.button.files.ios}
+- **Last Updated**: ${new Date(manifest.components.button.lastModified).toLocaleDateString()}
+
+#### Latest Changes:
+${manifest.components.button.changes[0].description}
+
+## Updating Components
+
+1. **Submodule Approach**: Add this repo as a submodule and pull changes
+2. **CI/CD Integration**: Set up automated checks for component updates
+3. **Version Tracking**: Check \`components.json\` for version changes
+
+Generated on: ${new Date().toLocaleDateString()}
+`;
+
+  fs.writeFileSync("./build/README.md", readme);
 }
 
 function generateMobileComponentSpecs() {
