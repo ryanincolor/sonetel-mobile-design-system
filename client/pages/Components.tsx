@@ -31,6 +31,9 @@ export default function Components() {
   const [activePlatform, setActivePlatform] = useState<Platform>("android");
   const [viewMode, setViewMode] = useState<ViewMode>("preview");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [selectedComponentType, setSelectedComponentType] = useState<
+    "button" | "callitem"
+  >("button");
 
   useEffect(() => {
     loadComponents();
@@ -60,6 +63,322 @@ export default function Components() {
       setTimeout(() => setCopiedCode(null), 2000);
     } catch (err) {
       console.error("Failed to copy code:", err);
+    }
+  };
+
+  const getCallItemCodeExample = (platform: Platform) => {
+    if (platform === "android") {
+      return {
+        component: `@Composable
+fun SonetelCallItem(
+    contactName: String,
+    timeStamp: String,
+    isMissedCall: Boolean = false,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.98f else 1f,
+        animationSpec = tween(100),
+        label = "call_item_scale"
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .scale(scale)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple()
+            ) { onClick() }
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Avatar
+            SonetelAvatar(
+                modifier = Modifier.size(44.dp)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Content
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Text(
+                    text = contactName,
+                                        style = SonetelTypography.Label.xlarge,
+                    color = if (isMissedCall)
+                        SonetelDesignTokens.alertCriticalLight
+                    else
+                        SonetelDesignTokens.solidZ7Light,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Text(
+                    text = timeStamp,
+                                        style = SonetelTypography.Label.large,
+                    color = SonetelDesignTokens.solidZ5Light,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            // Info Button
+            SonetelInfoButton(
+                onClick = { /* Handle info click */ }
+            )
+        }
+    }
+}`,
+        usage: `// Basic usage
+SonetelCallItem(
+    contactName = "John Doe",
+    timeStamp = "2 min ago",
+    onClick = { /* Handle call item click */ }
+)
+
+// Missed call
+SonetelCallItem(
+    contactName = "Jane Smith",
+    timeStamp = "1 hour ago",
+    isMissedCall = true,
+    onClick = { /* Handle call item click */ }
+)
+
+// With custom click handlers
+SonetelCallItem(
+    contactName = "Alice Johnson",
+    timeStamp = "Yesterday",
+    onClick = { /* Handle call item click */ },
+    modifier = Modifier.fillMaxWidth()
+)`,
+        subcomponents: `// SonetelAvatar Component
+@Composable
+fun SonetelAvatar(
+    modifier: Modifier = Modifier,
+    size: Dp = 44.dp
+) {
+    Box(
+        modifier = modifier
+            .size(size)
+            .background(
+                color = SonetelDesignTokens.solidZ7Light.copy(alpha = 0.04f),
+                shape = CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(
+            modifier = Modifier.size(size * 0.55f)
+        ) {
+            val path = Path().apply {
+                // User icon SVG path from Figma
+                moveTo(12f, 12f)
+                cubicTo(14.21f, 12f, 16f, 10.21f, 16f, 8f)
+                cubicTo(16f, 5.79f, 14.21f, 4f, 12f, 4f)
+                // ... complete SVG path
+            }
+            drawPath(
+                path = path,
+                color = Color.Black.copy(alpha = 0.12f)
+            )
+        }
+    }
+}
+
+// SonetelInfoButton Component
+@Composable
+fun SonetelInfoButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(48.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = ripple(bounded = false, radius = 24.dp)
+            ) { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(
+            modifier = Modifier.size(36.dp)
+        ) {
+            val path = Path().apply {
+                // Info icon SVG path from Figma
+                addOval(Rect(center = Offset(18f, 18f), radius = 18f))
+                // ... complete SVG path
+            }
+            drawPath(
+                path = path,
+                color = Color.Black.copy(alpha = 0.6f)
+            )
+        }
+    }
+}`,
+      };
+    } else {
+      return {
+        component: `class SonetelCallItem: UIControl {
+
+    var contactName: String = "" {
+        didSet { updateContent() }
+    }
+
+    var timeStamp: String = "" {
+        didSet { updateContent() }
+    }
+
+    var isMissedCall: Bool = false {
+        didSet { updateAppearance() }
+    }
+
+    private let avatarView = SonetelAvatar()
+    private let contactLabel = UILabel()
+    private let timeLabel = UILabel()
+    private let infoButton = SonetelInfoButton()
+    private let stackView = UIStackView()
+    private let contentStackView = UIStackView()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupCallItem()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupCallItem()
+    }
+
+    private func setupCallItem() {
+        setupLayout()
+        setupAppearance()
+        setupInteraction()
+    }
+
+    private func setupLayout() {
+        // Configure stack views
+        contentStackView.axis = .vertical
+        contentStackView.spacing = 2
+        contentStackView.alignment = .leading
+
+        stackView.axis = .horizontal
+        stackView.spacing = 12
+        stackView.alignment = .center
+
+        // Add subviews
+        contentStackView.addArrangedSubview(contactLabel)
+        contentStackView.addArrangedSubview(timeLabel)
+
+        stackView.addArrangedSubview(avatarView)
+        stackView.addArrangedSubview(contentStackView)
+        stackView.addArrangedSubview(infoButton)
+
+        addSubview(stackView)
+
+        // Setup constraints
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
+        ])
+    }
+
+    private func setupAppearance() {
+                contactLabel.font = SonetelTypography.labelXLarge
+        timeLabel.font = SonetelTypography.labelLarge
+        timeLabel.textColor = SonetelColors.solidZ5
+
+        updateAppearance()
+    }
+
+    private func updateAppearance() {
+        contactLabel.textColor = isMissedCall ?
+            SonetelColors.alertCritical : SonetelColors.solidZ7
+    }
+
+    @objc private func touchDown() {
+        UIView.animate(withDuration: 0.1) {
+            self.transform = CGAffineTransform(scaleX: 0.98, y: 0.98)
+        }
+    }
+
+    @objc private func touchUp() {
+        UIView.animate(withDuration: 0.1) {
+            self.transform = .identity
+        }
+    }
+}`,
+        usage: `// Basic usage
+let callItem = SonetelCallItem()
+callItem.contactName = "John Doe"
+callItem.timeStamp = "2 min ago"
+
+// Missed call
+callItem.isMissedCall = true
+
+// SwiftUI usage
+SonetelCallItem(
+    contactName: "John Doe",
+    timeStamp: "2 min ago",
+    isMissedCall: false,
+    action: { /* Handle tap */ }
+)`,
+        subcomponents: `// SonetelAvatar
+class SonetelAvatar: UIView {
+    override func draw(_ rect: CGRect) {
+        let path = UIBezierPath(ovalIn: rect)
+        SonetelColors.solidZ7.withAlphaComponent(0.04).setFill()
+        path.fill()
+
+        // Draw user icon
+        let iconSize = rect.width * 0.55
+        let iconRect = CGRect(
+            x: (rect.width - iconSize) / 2,
+            y: (rect.height - iconSize) / 2,
+            width: iconSize,
+            height: iconSize
+        )
+
+        let iconPath = UIBezierPath()
+        // Add user icon path here
+        UIColor.black.withAlphaComponent(0.12).setFill()
+        iconPath.fill()
+    }
+}
+
+// SonetelInfoButton
+class SonetelInfoButton: UIButton {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupButton()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupButton()
+    }
+
+    private func setupButton() {
+        setImage(createInfoIcon(), for: .normal)
+        layer.cornerRadius = 24
+    }
+
+    private func createInfoIcon() -> UIImage? {
+        // Create info icon programmatically
+        // ... implementation
+    }
+}`,
+      };
     }
   };
 
@@ -316,6 +635,218 @@ enum ButtonVariant {
     return `inline-flex items-center justify-center font-semibold rounded-full transition-all ${sizeStyles[buttonConfig.size]} ${variantStyles[buttonConfig.variant]} ${stateStyles[buttonConfig.state]} ${buttonConfig.fullWidth ? "w-full" : ""}`;
   };
 
+  // Call Item configuration state
+  const [callItemConfig, setCallItemConfig] = useState({
+    type: "Default",
+    state: "Default",
+    contactName: "John Doe",
+    timeStamp: "2 min ago",
+  });
+
+  const CallItemPreview = () => (
+    <div className="bg-gradient-to-br from-muted/20 to-muted/5 rounded-2xl p-8 border">
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-semibold mb-2">
+          Interactive Call Item Preview
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Configure the call item properties below to see the{" "}
+          {activePlatform === "ios" ? "iOS" : "Android"} call item component
+        </p>
+      </div>
+
+      {/* Call Item Controls */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-2xl mx-auto">
+        {/* Type Dropdown */}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-muted-foreground">
+            Type
+          </label>
+          <select
+            value={callItemConfig.type}
+            onChange={(e) =>
+              setCallItemConfig({ ...callItemConfig, type: e.target.value })
+            }
+            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="Default">Default</option>
+            <option value="Missed">Missed</option>
+          </select>
+        </div>
+
+        {/* State Dropdown */}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-muted-foreground">
+            State
+          </label>
+          <select
+            value={callItemConfig.state}
+            onChange={(e) =>
+              setCallItemConfig({ ...callItemConfig, state: e.target.value })
+            }
+            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="Default">Default</option>
+            <option value="Tapped">Tapped</option>
+          </select>
+        </div>
+
+        {/* Contact Name Input */}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-muted-foreground">
+            Contact Name
+          </label>
+          <input
+            type="text"
+            value={callItemConfig.contactName}
+            onChange={(e) =>
+              setCallItemConfig({
+                ...callItemConfig,
+                contactName: e.target.value,
+              })
+            }
+            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="Contact name"
+          />
+        </div>
+
+        {/* Time Stamp Input */}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-muted-foreground">
+            Time Stamp
+          </label>
+          <input
+            type="text"
+            value={callItemConfig.timeStamp}
+            onChange={(e) =>
+              setCallItemConfig({
+                ...callItemConfig,
+                timeStamp: e.target.value,
+              })
+            }
+            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="Time stamp"
+          />
+        </div>
+      </div>
+
+      {/* Live Call Item Preview */}
+      <div className="flex flex-col items-center gap-4">
+        <div className="text-sm font-medium text-muted-foreground">
+          Live Preview
+        </div>
+        <div className="w-full max-w-md">
+          <div
+            className={`flex items-center gap-3 p-3 rounded-lg transition-all cursor-pointer ${
+              callItemConfig.state === "Tapped"
+                ? "bg-muted/50 scale-[0.98]"
+                : "bg-background hover:bg-muted/20"
+            } border`}
+            onClick={() => {
+              setCallItemConfig({
+                ...callItemConfig,
+                state: callItemConfig.state === "Tapped" ? "Default" : "Tapped",
+              });
+              // Reset state after 150ms to simulate tap
+              setTimeout(() => {
+                setCallItemConfig((prev) => ({ ...prev, state: "Default" }));
+              }, 150);
+            }}
+          >
+            {/* Avatar */}
+            <div className="w-11 h-11 bg-muted/40 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="text-muted-foreground/60"
+              >
+                <path
+                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h3
+                    className={`text-base font-medium truncate ${
+                      callItemConfig.type === "Missed"
+                        ? "text-destructive"
+                        : "text-foreground"
+                    }`}
+                  >
+                    {callItemConfig.contactName}
+                  </h3>
+                  <div
+                    className="flex items-center gap-0.5"
+                    style={{ marginTop: "2px" }}
+                  >
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {callItemConfig.timeStamp}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Info Button */}
+                <button className="w-12 h-12 flex items-center justify-center rounded-full hover:bg-muted/50 transition-colors flex-shrink-0">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="text-muted-foreground/60"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <path
+                      d="m9,9 0,0 a3,3 0 1,1 6,0c0,2 -3,3 -3,3"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="m12,17 .01,0"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Specifications */}
+        <div className="bg-muted/50 rounded-lg p-4 text-center max-w-md">
+          <div className="text-sm space-y-1">
+            <div className="font-medium">Current Configuration</div>
+            <div className="text-muted-foreground">
+              Type: {callItemConfig.type} • State: {callItemConfig.state}
+            </div>
+            {callItemConfig.type === "Missed" && (
+              <div className="text-destructive text-xs mt-2 px-2 py-1 bg-destructive/10 rounded">
+                ⚠️ Contact name uses alert.critical color for missed calls
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   const ComponentPreview = () => (
     <div className="bg-gradient-to-br from-muted/20 to-muted/5 rounded-2xl p-8 border">
       <div className="text-center mb-6">
@@ -523,7 +1054,10 @@ enum ButtonVariant {
     );
   }
 
-  const codeExamples = getCodeExample(activePlatform);
+  const codeExamples =
+    selectedComponentType === "button"
+      ? getCodeExample(activePlatform)
+      : getCallItemCodeExample(activePlatform);
 
   return (
     <div className="container mx-auto px-6 py-12">
@@ -629,12 +1163,44 @@ enum ButtonVariant {
             </div>
           </div>
 
+          {/* Component Selection */}
+          <div className="flex items-center justify-center mb-8">
+            <div className="bg-muted/50 p-1 rounded-lg">
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setSelectedComponentType("button")}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    selectedComponentType === "button"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Button Component
+                </button>
+                <button
+                  onClick={() => setSelectedComponentType("callitem")}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    selectedComponentType === "callitem"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Call Item Component
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* Content */}
           <div className="bg-card rounded-2xl border overflow-hidden">
             <div className="border-b bg-muted/20 px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-xl font-bold">Button Component</h2>
+                  <h2 className="text-xl font-bold">
+                    {selectedComponentType === "button"
+                      ? "Button Component"
+                      : "Call Item Component"}
+                  </h2>
                   <div className="flex items-center gap-2">
                     <div
                       className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
@@ -653,7 +1219,7 @@ enum ButtonVariant {
                   </div>
                 </div>
                 <a
-                  href={`/api/components/Button/download`}
+                  href={`/api/components/${selectedComponentType === "button" ? "Button" : "CallItem"}/download`}
                   className="inline-flex items-center gap-2 px-3 py-2 bg-muted rounded-lg text-sm hover:bg-muted/80 transition-colors"
                 >
                   <ExternalLink className="h-4 w-4" />
@@ -664,7 +1230,11 @@ enum ButtonVariant {
 
             <div className="p-6">
               {viewMode === "preview" ? (
-                <ComponentPreview />
+                selectedComponentType === "button" ? (
+                  <ComponentPreview />
+                ) : (
+                  <CallItemPreview />
+                )
               ) : (
                 <div className="space-y-6">
                   {/* Component Implementation */}
@@ -680,15 +1250,21 @@ enum ButtonVariant {
                     />
                   </div>
 
-                  {/* Supporting Types */}
+                  {/* Supporting Types / Subcomponents */}
                   <div>
                     <h3 className="text-lg font-semibold mb-4">
-                      Supporting Types
+                      {selectedComponentType === "button"
+                        ? "Supporting Types"
+                        : "Subcomponents"}
                     </h3>
                     <CodeBlock
-                      code={codeExamples.enums}
+                      code={
+                        selectedComponentType === "button"
+                          ? codeExamples.enums
+                          : codeExamples.subcomponents
+                      }
                       language={activePlatform === "ios" ? "Swift" : "Kotlin"}
-                      id={`${activePlatform}-enums`}
+                      id={`${activePlatform}-${selectedComponentType === "button" ? "enums" : "subcomponents"}`}
                     />
                   </div>
 
@@ -746,7 +1322,12 @@ enum ButtonVariant {
                         variant="outline"
                         size="sm"
                         onClick={() =>
-                          copyToClipboard(codeExamples.enums, "quick-enums")
+                          copyToClipboard(
+                            selectedComponentType === "button"
+                              ? codeExamples.enums
+                              : codeExamples.subcomponents,
+                            "quick-enums",
+                          )
                         }
                       >
                         {copiedCode === "quick-enums" ? (
@@ -754,7 +1335,9 @@ enum ButtonVariant {
                         ) : (
                           <Copy className="h-4 w-4 mr-2" />
                         )}
-                        Copy Types
+                        {selectedComponentType === "button"
+                          ? "Copy Types"
+                          : "Copy Subcomponents"}
                       </Button>
                     </div>
                   </div>
@@ -764,357 +1347,496 @@ enum ButtonVariant {
           </div>
 
           {/* Design Tokens Section */}
-          <div className="bg-card rounded-2xl border p-6">
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full"></div>
-              Design Tokens for Current Configuration
-            </h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              Tokens used by{" "}
-              <span className="font-medium">
-                {buttonConfig.size} {buttonConfig.variant}
-              </span>{" "}
-              button in{" "}
-              <span className="font-medium">{buttonConfig.state}</span> state
-            </p>
+          {selectedComponentType === "button" && (
+            <div className="bg-card rounded-2xl border p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                Design Tokens for Current Configuration
+              </h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                Tokens used by{" "}
+                <span className="font-medium">
+                  {buttonConfig.size} {buttonConfig.variant}
+                </span>{" "}
+                button in{" "}
+                <span className="font-medium">{buttonConfig.state}</span> state
+              </p>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Component Properties with Tokens */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                  Component Properties
-                </h4>
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Component Properties with Tokens */}
                 <div className="space-y-3">
-                  {/* Height */}
-                  <div className="p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">Height</span>
-                      <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
-                        {buttonConfig.size === "Extra Small"
-                          ? "32px"
-                          : buttonConfig.size === "Small"
-                            ? "40px"
-                            : buttonConfig.size === "Medium"
-                              ? "36px"
-                              : buttonConfig.size === "Large"
-                                ? "48px"
-                                : "56px"}
-                      </span>
+                  <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                    Component Properties
+                  </h4>
+                  <div className="space-y-3">
+                    {/* Height */}
+                    <div className="p-3 bg-muted/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">Height</span>
+                        <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
+                          {buttonConfig.size === "Extra Small"
+                            ? "32px"
+                            : buttonConfig.size === "Small"
+                              ? "40px"
+                              : buttonConfig.size === "Medium"
+                                ? "36px"
+                                : buttonConfig.size === "Large"
+                                  ? "48px"
+                                  : "56px"}
+                        </span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Fixed value, not tokenized
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      Fixed value, not tokenized
-                    </div>
-                  </div>
 
-                  {/* Border Radius */}
-                  <div className="p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">Border Radius</span>
-                      <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
-                        height/2
-                      </span>
+                    {/* Border Radius */}
+                    <div className="p-3 bg-muted/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">
+                          Border Radius
+                        </span>
+                        <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
+                          height/2
+                        </span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Calculated from height (fully rounded)
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      Calculated from height (fully rounded)
-                    </div>
-                  </div>
 
-                  {/* Background */}
-                  <div className="p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">Background</span>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-4 h-4 rounded border shadow-sm ${
-                            buttonConfig.variant === "Primary"
-                              ? "bg-foreground"
+                    {/* Background */}
+                    <div className="p-3 bg-muted/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">Background</span>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`w-4 h-4 rounded border shadow-sm ${
+                              buttonConfig.variant === "Primary"
+                                ? "bg-foreground"
+                                : buttonConfig.variant === "Secondary"
+                                  ? "bg-muted"
+                                  : buttonConfig.variant === "Outline"
+                                    ? "bg-transparent border-dashed"
+                                    : buttonConfig.variant === "Ghost"
+                                      ? "bg-transparent"
+                                      : buttonConfig.variant === "Destructive"
+                                        ? "bg-destructive"
+                                        : "bg-green-600"
+                            }`}
+                          ></div>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                            {buttonConfig.variant === "Primary"
+                              ? "solid.z7"
                               : buttonConfig.variant === "Secondary"
-                                ? "bg-muted"
+                                ? "solid.z1"
                                 : buttonConfig.variant === "Outline"
-                                  ? "bg-transparent border-dashed"
+                                  ? "transparent.t1"
                                   : buttonConfig.variant === "Ghost"
-                                    ? "bg-transparent"
+                                    ? "transparent"
                                     : buttonConfig.variant === "Destructive"
-                                      ? "bg-destructive"
-                                      : "bg-green-600"
-                          }`}
-                        ></div>
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
-                          {buttonConfig.variant === "Primary"
-                            ? "solid.z7"
-                            : buttonConfig.variant === "Secondary"
-                              ? "solid.z1"
-                              : buttonConfig.variant === "Outline"
-                                ? "transparent.t1"
-                                : buttonConfig.variant === "Ghost"
-                                  ? "transparent"
+                                      ? "alert.critical"
+                                      : "accents.green"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Design token
+                      </div>
+                    </div>
+
+                    {/* Text Color */}
+                    <div className="p-3 bg-muted/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">Text Color</span>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`w-4 h-4 rounded border shadow-sm ${
+                              buttonConfig.variant === "Primary"
+                                ? "bg-background"
+                                : buttonConfig.variant === "Secondary"
+                                  ? "bg-foreground"
+                                  : buttonConfig.variant === "Outline"
+                                    ? "bg-foreground"
+                                    : buttonConfig.variant === "Ghost"
+                                      ? "bg-foreground"
+                                      : buttonConfig.variant === "Destructive"
+                                        ? "bg-background"
+                                        : "bg-background"
+                            }`}
+                          ></div>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                            {buttonConfig.variant === "Primary" ||
+                            buttonConfig.variant === "Destructive" ||
+                            buttonConfig.variant === "Success"
+                              ? "solid.z0"
+                              : "solid.z7"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Design token
+                      </div>
+                    </div>
+
+                    {/* Font Size */}
+                    <div className="p-3 bg-muted/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">Font Size</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
+                            {buttonConfig.size === "Extra Small"
+                              ? "12px"
+                              : buttonConfig.size === "Small" ||
+                                  buttonConfig.size === "Medium"
+                                ? "14px"
+                                : "20px"}
+                          </span>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                            {buttonConfig.size === "Extra Small"
+                              ? "font.size.xs"
+                              : buttonConfig.size === "Small" ||
+                                  buttonConfig.size === "Medium"
+                                ? "font.size.sm"
+                                : "font.size.lg"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Design token
+                      </div>
+                    </div>
+
+                    {/* Padding */}
+                    <div className="p-3 bg-muted/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">Padding</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
+                            {buttonConfig.size === "Extra Small"
+                              ? "4px 12px"
+                              : buttonConfig.size === "Small"
+                                ? "8px 16px"
+                                : buttonConfig.size === "Medium"
+                                  ? "8px 16px"
+                                  : buttonConfig.size === "Large"
+                                    ? "16px 20px"
+                                    : "16px 20px"}
+                          </span>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                            {buttonConfig.size === "Extra Small"
+                              ? "spacing.02×spacing.04"
+                              : buttonConfig.size === "Small"
+                                ? "spacing.03×spacing.05"
+                                : buttonConfig.size === "Medium"
+                                  ? "spacing.03×spacing.05"
+                                  : buttonConfig.size === "Large"
+                                    ? "spacing.05×spacing.06"
+                                    : "spacing.05×spacing.06"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Design tokens
+                      </div>
+                    </div>
+
+                    {/* Font Weight */}
+                    <div className="p-3 bg-muted/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">Font Weight</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
+                            600
+                          </span>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                            font.weight.bold
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Design token
+                      </div>
+                    </div>
+
+                    {buttonConfig.variant === "Outline" && (
+                      <div className="p-3 bg-muted/20 rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium">Border</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 bg-foreground rounded border shadow-sm"></div>
+                            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                              solid.z7
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          2px solid, design token color
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Token Details */}
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                    Active Tokens
+                  </h4>
+                  <div className="space-y-3">
+                    {/* Background Token */}
+                    {buttonConfig.variant !== "Ghost" && (
+                      <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium">
+                            {buttonConfig.variant === "Primary"
+                              ? "solid.z7"
+                              : buttonConfig.variant === "Secondary"
+                                ? "solid.z1"
+                                : buttonConfig.variant === "Outline"
+                                  ? "transparent.t1"
                                   : buttonConfig.variant === "Destructive"
                                     ? "alert.critical"
                                     : "accents.green"}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Design token
-                    </div>
-                  </div>
-
-                  {/* Text Color */}
-                  <div className="p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">Text Color</span>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-4 h-4 rounded border shadow-sm ${
-                            buttonConfig.variant === "Primary"
-                              ? "bg-background"
-                              : buttonConfig.variant === "Secondary"
+                          </span>
+                          <div
+                            className={`w-5 h-5 rounded border shadow-sm ${
+                              buttonConfig.variant === "Primary"
                                 ? "bg-foreground"
-                                : buttonConfig.variant === "Outline"
-                                  ? "bg-foreground"
-                                  : buttonConfig.variant === "Ghost"
-                                    ? "bg-foreground"
+                                : buttonConfig.variant === "Secondary"
+                                  ? "bg-muted"
+                                  : buttonConfig.variant === "Outline"
+                                    ? "bg-transparent border-dashed"
                                     : buttonConfig.variant === "Destructive"
-                                      ? "bg-background"
-                                      : "bg-background"
-                          }`}
-                        ></div>
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                                      ? "bg-destructive"
+                                      : "bg-green-600"
+                            }`}
+                          ></div>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Used for:{" "}
+                          <span className="font-medium">background-color</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Platform:{" "}
+                          {activePlatform === "ios"
+                            ? "UIColor.solidZ7"
+                            : "SonetelDesignTokens.solidZ7Light"}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Text Color Token */}
+                    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">
                           {buttonConfig.variant === "Primary" ||
                           buttonConfig.variant === "Destructive" ||
                           buttonConfig.variant === "Success"
                             ? "solid.z0"
                             : "solid.z7"}
                         </span>
-                      </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Design token
-                    </div>
-                  </div>
-
-                  {/* Font Size */}
-                  <div className="p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">Font Size</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
-                          {buttonConfig.size === "Extra Small"
-                            ? "12px"
-                            : buttonConfig.size === "Small" ||
-                                buttonConfig.size === "Medium"
-                              ? "14px"
-                              : "20px"}
-                        </span>
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
-                          {buttonConfig.size === "Extra Small"
-                            ? "font.size.xs"
-                            : buttonConfig.size === "Small" ||
-                                buttonConfig.size === "Medium"
-                              ? "font.size.sm"
-                              : "font.size.lg"}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Design token
-                    </div>
-                  </div>
-
-                  {/* Padding */}
-                  <div className="p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">Padding</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
-                          {buttonConfig.size === "Extra Small"
-                            ? "4px 12px"
-                            : buttonConfig.size === "Small"
-                              ? "8px 16px"
-                              : buttonConfig.size === "Medium"
-                                ? "8px 16px"
-                                : buttonConfig.size === "Large"
-                                  ? "16px 20px"
-                                  : "16px 20px"}
-                        </span>
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
-                          {buttonConfig.size === "Extra Small"
-                            ? "spacing.02×spacing.04"
-                            : buttonConfig.size === "Small"
-                              ? "spacing.03×spacing.05"
-                              : buttonConfig.size === "Medium"
-                                ? "spacing.03×spacing.05"
-                                : buttonConfig.size === "Large"
-                                  ? "spacing.05×spacing.06"
-                                  : "spacing.05×spacing.06"}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Design tokens
-                    </div>
-                  </div>
-
-                  {/* Font Weight */}
-                  <div className="p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">Font Weight</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs bg-muted px-2 py-1 rounded font-mono">
-                          600
-                        </span>
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
-                          font.weight.bold
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Design token
-                    </div>
-                  </div>
-
-                  {buttonConfig.variant === "Outline" && (
-                    <div className="p-3 bg-muted/20 rounded-lg">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium">Border</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 bg-foreground rounded border shadow-sm"></div>
-                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
-                            solid.z7
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        2px solid, design token color
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Token Details */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                  Active Tokens
-                </h4>
-                <div className="space-y-3">
-                  {/* Background Token */}
-                  {buttonConfig.variant !== "Ghost" && (
-                    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium">
-                          {buttonConfig.variant === "Primary"
-                            ? "solid.z7"
-                            : buttonConfig.variant === "Secondary"
-                              ? "solid.z1"
-                              : buttonConfig.variant === "Outline"
-                                ? "transparent.t1"
-                                : buttonConfig.variant === "Destructive"
-                                  ? "alert.critical"
-                                  : "accents.green"}
-                        </span>
                         <div
                           className={`w-5 h-5 rounded border shadow-sm ${
-                            buttonConfig.variant === "Primary"
-                              ? "bg-foreground"
-                              : buttonConfig.variant === "Secondary"
-                                ? "bg-muted"
-                                : buttonConfig.variant === "Outline"
-                                  ? "bg-transparent border-dashed"
-                                  : buttonConfig.variant === "Destructive"
-                                    ? "bg-destructive"
-                                    : "bg-green-600"
+                            buttonConfig.variant === "Primary" ||
+                            buttonConfig.variant === "Destructive" ||
+                            buttonConfig.variant === "Success"
+                              ? "bg-background"
+                              : "bg-foreground"
                           }`}
                         ></div>
                       </div>
                       <div className="text-xs text-muted-foreground">
                         Used for:{" "}
-                        <span className="font-medium">background-color</span>
+                        <span className="font-medium">text-color</span>
                       </div>
                       <div className="text-xs text-muted-foreground mt-1">
                         Platform:{" "}
                         {activePlatform === "ios"
-                          ? "UIColor.solidZ7"
-                          : "SonetelDesignTokens.solidZ7Light"}
+                          ? "UIColor." +
+                            (buttonConfig.variant === "Primary" ||
+                            buttonConfig.variant === "Destructive" ||
+                            buttonConfig.variant === "Success"
+                              ? "solidZ0"
+                              : "solidZ7")
+                          : "SonetelDesignTokens." +
+                            (buttonConfig.variant === "Primary" ||
+                            buttonConfig.variant === "Destructive" ||
+                            buttonConfig.variant === "Success"
+                              ? "solidZ0Light"
+                              : "solidZ7Light")}
                       </div>
                     </div>
-                  )}
 
-                  {/* Text Color Token */}
-                  <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">
-                        {buttonConfig.variant === "Primary" ||
-                        buttonConfig.variant === "Destructive" ||
-                        buttonConfig.variant === "Success"
-                          ? "solid.z0"
-                          : "solid.z7"}
-                      </span>
-                      <div
-                        className={`w-5 h-5 rounded border shadow-sm ${
-                          buttonConfig.variant === "Primary" ||
-                          buttonConfig.variant === "Destructive" ||
-                          buttonConfig.variant === "Success"
-                            ? "bg-background"
-                            : "bg-foreground"
-                        }`}
-                      ></div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Used for: <span className="font-medium">text-color</span>
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Platform:{" "}
-                      {activePlatform === "ios"
-                        ? "UIColor." +
-                          (buttonConfig.variant === "Primary" ||
-                          buttonConfig.variant === "Destructive" ||
-                          buttonConfig.variant === "Success"
-                            ? "solidZ0"
-                            : "solidZ7")
-                        : "SonetelDesignTokens." +
-                          (buttonConfig.variant === "Primary" ||
-                          buttonConfig.variant === "Destructive" ||
-                          buttonConfig.variant === "Success"
-                            ? "solidZ0Light"
-                            : "solidZ7Light")}
-                    </div>
+                    {/* Border Token (Outline only) */}
+                    {buttonConfig.variant === "Outline" && (
+                      <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium">solid.z7</span>
+                          <div className="w-5 h-5 bg-foreground rounded border shadow-sm"></div>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Used for:{" "}
+                          <span className="font-medium">border-color</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Platform:{" "}
+                          {activePlatform === "ios"
+                            ? "UIColor.solidZ7"
+                            : "SonetelDesignTokens.solidZ7Light"}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Border Token (Outline only) */}
-                  {buttonConfig.variant === "Outline" && (
-                    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium">solid.z7</span>
-                        <div className="w-5 h-5 bg-foreground rounded border shadow-sm"></div>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        Used for:{" "}
-                        <span className="font-medium">border-color</span>
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        Platform:{" "}
-                        {activePlatform === "ios"
-                          ? "UIColor.solidZ7"
-                          : "SonetelDesignTokens.solidZ7Light"}
-                      </div>
+                  <div className="mt-4 p-3 bg-muted/10 rounded-lg">
+                    <div className="text-xs text-muted-foreground">
+                      <span className="font-medium">
+                        Non-tokenized properties:
+                      </span>{" "}
+                      Height and border-radius use fixed values. All other
+                      properties (padding, font-size, font-weight) use design
+                      tokens.
                     </div>
-                  )}
-                </div>
-
-                <div className="mt-4 p-3 bg-muted/10 rounded-lg">
-                  <div className="text-xs text-muted-foreground">
-                    <span className="font-medium">
-                      Non-tokenized properties:
-                    </span>{" "}
-                    Height and border-radius use fixed values. All other
-                    properties (padding, font-size, font-weight) use design
-                    tokens.
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Call Item Design Tokens Section */}
+          {selectedComponentType === "callitem" && (
+            <div className="bg-card rounded-2xl border p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                Design Tokens for Call Item
+              </h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                Tokens used by{" "}
+                <span className="font-medium">
+                  {callItemConfig.type} Call Item
+                </span>{" "}
+                in <span className="font-medium">{callItemConfig.state}</span>{" "}
+                state
+              </p>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Typography Tokens */}
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                    Typography Tokens
+                  </h4>
+                  <div className="space-y-3">
+                    {/* Contact Name Typography */}
+                    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">
+                          Contact Name
+                        </span>
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                          Label.xlarge
+                        </span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        16px font size, 24px line height, -2% letter spacing
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Platform: SonetelTypography.Label.xlarge
+                      </div>
+                    </div>
+
+                    {/* Time Stamp Typography */}
+                    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Time Stamp</span>
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                          Label.large
+                        </span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        14px font size, 20px line height, -2% letter spacing
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Platform: SonetelTypography.Label.large
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Color Tokens */}
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                    Color Tokens
+                  </h4>
+                  <div className="space-y-3">
+                    {/* Contact Name Color */}
+                    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">
+                          Contact Name Color
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`w-5 h-5 rounded border shadow-sm ${
+                              callItemConfig.type === "Missed"
+                                ? "bg-destructive"
+                                : "bg-foreground"
+                            }`}
+                          ></div>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                            {callItemConfig.type === "Missed"
+                              ? "alert.critical"
+                              : "solid.z7"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {callItemConfig.type === "Missed"
+                          ? "Red for missed calls"
+                          : "Default text color"}
+                      </div>
+                    </div>
+
+                    {/* Time Stamp Color */}
+                    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">
+                          Time Stamp Color
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 bg-muted-foreground rounded border shadow-sm"></div>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                            solid.z5
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Secondary text color
+                      </div>
+                    </div>
+
+                    {/* Avatar Background */}
+                    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">
+                          Avatar Background
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 bg-muted/40 rounded border shadow-sm"></div>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                            solid.z7 @ 4%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        4% opacity of primary color
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Specifications */}
           <div className="grid md:grid-cols-2 gap-6">
